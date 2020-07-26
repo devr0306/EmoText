@@ -50,7 +50,7 @@ public class SharedPrefManager {
     public boolean isLoggedIn(){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("save", false) != false;
+        return sharedPreferences.getBoolean("save", false) && (sharedPreferences.getString("token", null) != null);
     }
 
     public User getUser(){
