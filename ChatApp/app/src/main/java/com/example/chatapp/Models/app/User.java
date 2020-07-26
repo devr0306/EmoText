@@ -1,4 +1,4 @@
-package com.example.chatapp.Models.API;
+package com.example.chatapp.Models.app;
 
 import java.util.ArrayList;
 
@@ -28,12 +28,12 @@ public class User {
     private String bio;
     private boolean isDeleted;
     private String username;
-    private boolean seeRealName;
-    private boolean seeEmail;
-    private boolean textMe;
+    private int seeRealName;
+    private int seeEmail;
+    private int textMe;
     private boolean isOnline;
     private String lastSeen;
-    private boolean addToGroupChats;
+    private int addToGroupChats;
     private String createdAt;
     private String updatedAt;
 
@@ -53,8 +53,8 @@ public class User {
     }
 
     public User(String id, String name, String email, String password, String profilePictureURL, String bio, boolean isDeleted,
-                String username, boolean seeRealName, boolean seeEmail, boolean textMe, boolean isOnline, String lastSeen,
-                boolean addToGroupChats, String createdAt, String updatedAt) {
+                String username, int seeRealName, int seeEmail, int textMe, boolean isOnline, String lastSeen,
+                int addToGroupChats, String createdAt, String updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -152,27 +152,27 @@ public class User {
         this.username = username;
     }
 
-    public boolean isSeeRealName() {
+    public int isSeeRealName() {
         return seeRealName;
     }
 
-    public void setSeeRealName(boolean seeRealName) {
+    public void setSeeRealName(int seeRealName) {
         this.seeRealName = seeRealName;
     }
 
-    public boolean isSeeEmail() {
+    public int isSeeEmail() {
         return seeEmail;
     }
 
-    public void setSeeEmail(boolean seeEmail) {
+    public void setSeeEmail(int seeEmail) {
         this.seeEmail = seeEmail;
     }
 
-    public boolean isTextMe() {
+    public int isTextMe() {
         return textMe;
     }
 
-    public void setTextMe(boolean textMe) {
+    public void setTextMe(int textMe) {
         this.textMe = textMe;
     }
 
@@ -192,11 +192,11 @@ public class User {
         this.lastSeen = lastSeen;
     }
 
-    public boolean isAddToGroupChats() {
+    public int isAddToGroupChats() {
         return addToGroupChats;
     }
 
-    public void setAddToGroupChats(boolean addToGroupChats) {
+    public void setAddToGroupChats(int addToGroupChats) {
         this.addToGroupChats = addToGroupChats;
     }
 
