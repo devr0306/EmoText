@@ -12,12 +12,21 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.chatapp.Adapters.MainViewPagerAdapter;
 import com.example.chatapp.Fragments.CameraTabFragment;
 import com.example.chatapp.Fragments.ChatTabFragment;
 import com.example.chatapp.Fragments.InteractTabFragment;
+import com.example.chatapp.Models.API.UserListResponse;
+import com.example.chatapp.RetrofitClients.ContactsAPIClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -104,6 +113,40 @@ public class MainActivity extends AppCompatActivity {
         mainViewPagerAdapter = new MainViewPagerAdapter(mainActivityManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mainViewPager.setAdapter(mainViewPagerAdapter);
         mainViewPager.setOnPageChangeListener(pageChangeListener);
+
+        setContacts();
+    }
+
+    public void setContacts(){
+
+        Call<UserListResponse> getContactsCall = ContactsAPIClient
+                .getInstance()
+                .getContactsAPI()
+                .getContacts(SharedPrefManager.getInstance(MainActivity.this).getUser().getToken());
+
+        getContactsCall.enqueue(new Callback<UserListResponse>() {
+            @Override
+            public void onResponse(Call<UserListResponse> call, Response<UserListResponse> response) {
+
+                if(response.isSuccessful()){
+                    UserListResponse ulr = response.body();
+                    Toast.makeText(MainActivity.this, ulr.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                else{
+                    try {
+                        Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void changeTab(int position){
