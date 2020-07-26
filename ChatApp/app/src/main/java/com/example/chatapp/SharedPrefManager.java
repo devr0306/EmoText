@@ -3,7 +3,7 @@ package com.example.chatapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.chatapp.Models.API.User;
+import com.example.chatapp.Models.app.User;
 
 public class SharedPrefManager {
 

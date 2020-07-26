@@ -1,5 +1,6 @@
 package com.example.chatapp.Models.API;
 
+import com.example.chatapp.Models.app.User;
 import com.google.gson.annotations.SerializedName;
 
 public class UserListResponse {

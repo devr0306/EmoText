@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chatapp.Models.API.LoginResponse;
-import com.example.chatapp.Models.API.User;
+import com.example.chatapp.Models.app.User;
 import com.example.chatapp.Models.API.UserResponse;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 
@@ -21,7 +20,6 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class LoginActivity extends AppCompatActivity {
 

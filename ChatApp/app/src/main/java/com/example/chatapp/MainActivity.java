@@ -23,6 +23,7 @@ import com.example.chatapp.RetrofitClients.ContactsAPIClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(response.isSuccessful()){
                     UserListResponse ulr = response.body();
-                    Toast.makeText(MainActivity.this, ulr.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, Arrays.toString(ulr.getContacts()), Toast.LENGTH_SHORT).show();
                 }
 
                 else{

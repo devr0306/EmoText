@@ -10,12 +10,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chatapp.Models.API.DefaultResponse;
 import com.example.chatapp.Models.API.LoginResponse;
-import com.example.chatapp.Models.API.User;
 import com.example.chatapp.Models.API.UserResponse;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 
@@ -230,7 +228,7 @@ public class SignUpActivity extends AppCompatActivity {
         Call<LoginResponse> loginCall = AuthRetrofitClient
                 .getInstance()
                 .getAuthApi()
-                .signin(username, password);
+                .signin(email, password);
 
         loginCall.enqueue(new Callback<LoginResponse>() {
             @Override
