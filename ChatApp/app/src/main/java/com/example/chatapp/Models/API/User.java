@@ -48,7 +48,8 @@ public class User {
         this.email = email;
         this.password = password;
 
-        instantiateFriends();
+        if(friends == null)
+            friends = new ArrayList<>();
     }
 
     public User(String id, String name, String email, String password, String profilePictureURL, String bio, boolean isDeleted,
@@ -71,13 +72,20 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
 
-        instantiateFriends();
-    }
-
-    public void instantiateFriends(){
-
         if(friends == null)
             friends = new ArrayList<>();
+    }
+
+    public void setFriends(ArrayList<User> friends){
+        this.friends = friends;
+    }
+
+    public ArrayList<User> getFriends(){
+        return friends;
+    }
+
+    public void addFriend(User user){
+        friends.add(user);
     }
 
     public String getId() {
