@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toTopOf="@+id/contact_recycler_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/darkBlue">
+        android:background="@color/colorPrimaryDark">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,11 +24,20 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_settings_drawable"
-                android:id="@+id/settings_button"
+                android:src="@drawable/ic_person_add"
+                android:id="@+id/add_person_button"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="20dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_settings_drawable"
+                android:id="@+id/settings_button"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"/>
 
         </RelativeLayout>
 
