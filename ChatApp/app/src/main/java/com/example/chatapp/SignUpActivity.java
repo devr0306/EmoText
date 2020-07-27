@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -64,12 +65,12 @@ public class SignUpActivity extends AppCompatActivity {
     public void initEmail(){
 
         emailLayout = findViewById(R.id.email_and_code_signup_layout);
-        emailPromptLayout = (RelativeLayout)findViewById(R.id.layout_for_email_enter);
-        emailCodePromptLayout = (RelativeLayout)findViewById(R.id.layout_for_email_code);
-        emailEnterButton = (Button)findViewById(R.id.email_enter_button);
-        emailCodeEnterButton = (Button)findViewById(R.id.email_code_enter_button);
-        emailEnterEditText = (EditText)findViewById(R.id.email_prompt_edit_text);
-        emailCodeEnterEditText = (EditText) findViewById(R.id.email_code_edit_text);
+        emailPromptLayout = findViewById(R.id.layout_for_email_enter);
+        emailCodePromptLayout = findViewById(R.id.layout_for_email_code);
+        emailEnterButton = findViewById(R.id.email_enter_button);
+        emailCodeEnterButton = findViewById(R.id.email_code_enter_button);
+        emailEnterEditText = findViewById(R.id.email_prompt_edit_text);
+        emailCodeEnterEditText = findViewById(R.id.email_code_edit_text);
 
         startEmailLayout();
 
@@ -238,6 +239,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                     LoginResponse lr = response.body();
 
+                    Log.d("Success", "Login Success: " + lr.getToken());
+
                     if(rememberBox.isChecked())
                         SharedPrefManager.getInstance(SignUpActivity.this).rememberUser();
 
@@ -264,7 +267,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+                Log.d("Error for login", t.toString());
             }
         });
     }
@@ -308,7 +311,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-
+                Log.d("Error for getUser", t.toString());
             }
         });
     }
