@@ -3,6 +3,9 @@ package com.example.chatapp.Models.API;
 import com.example.chatapp.Models.app.User;
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class UserListResponse {
 
     @SerializedName("success")
@@ -18,6 +21,16 @@ public class UserListResponse {
         this.success = success;
         this.message = message;
         this.contacts = contacts;
+    }
+
+    public ArrayList<User> convertToList(){
+
+        ArrayList<User> userList = new ArrayList<>();
+
+        for(User us: contacts)
+            userList.add(us);
+
+        return userList;
     }
 
     public boolean isSuccess() {

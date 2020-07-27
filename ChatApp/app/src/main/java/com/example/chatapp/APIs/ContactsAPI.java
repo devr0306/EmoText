@@ -17,4 +17,14 @@ public interface ContactsAPI {
     Call<UserListResponse> getContacts(
             @Query("token") String token
     );
+
+    @GET("get-friend-requests/")
+    Call<UserListResponse> getFriendRequests(
+            @Query("token") String token
+    );
+
+    @GET("contacts/find-contacts/")
+    Call<UserListResponse> findContacts(
+            @Query("searchQuery") String searchQuery
+    );
 }
