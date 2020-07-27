@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import com.example.chatapp.AddPersonActivity;
 import com.example.chatapp.Models.app.Contact;
 import com.example.chatapp.R;
 import com.example.chatapp.Adapters.ChatTabRecyclerViewAdapter;
@@ -55,6 +55,13 @@ public class ChatTabFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), SettingsActivity.class));
+            }
+        });
+
+        contactFragmentView.findViewById(R.id.add_person_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), AddPersonActivity.class));
             }
         });
 
