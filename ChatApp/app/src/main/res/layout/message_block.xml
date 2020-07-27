@@ -18,9 +18,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message_text"
+        android:fontFamily="@font/neris_light"
+        android:textColor="@color/black"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="3dp"
-        android:textSize="16dp"/>
+        android:layout_marginVertical="5dp"
+        android:textSize="18dp"
+        android:lineSpacingMultiplier="0.8"/>
 
     </RelativeLayout>
 

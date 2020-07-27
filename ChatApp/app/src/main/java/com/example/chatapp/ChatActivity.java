@@ -53,6 +53,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             messageRecViewAdapter = new UserMessagesRecyclerViewAdapter(this);
             messageList = new ArrayList<>();
 
+
             setMessagesRecyclerView();
             getIntentInfo();
     }
@@ -63,6 +64,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         messagesRecyclerView.setAdapter(messageRecViewAdapter);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messagesRecyclerView.scrollBy(0,5);
     }
 
     public void getIntentInfo(){
