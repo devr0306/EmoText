@@ -5,17 +5,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.chatapp.Models.API.DefaultResponse;
-import com.example.chatapp.Models.API.LoginResponse;
-import com.example.chatapp.Models.API.UserResponse;
+import com.example.chatapp.ResponseObjects.DefaultResponse;
+import com.example.chatapp.ResponseObjects.LoginResponse;
+import com.example.chatapp.ResponseObjects.UserResponse;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 
 import java.io.IOException;
@@ -32,6 +34,9 @@ public class SignUpActivity extends AppCompatActivity {
     private ConstraintLayout layout_for_username_fragment;
     private EditText nameET, usernameET, passwordET, confirmPasswordET;
     private Button signUpButton;
+
+    private ImageView enterPasswordLockButton, confirmPasswordLockButton;
+    boolean isEnterLocked, isConfirmLocked;
 
     private CheckBox rememberBox;
     
@@ -100,7 +105,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 else{
-                    email = emailEnterEditText.getText().toString();
+                    email = emailEnterEditText.getText().toString().trim();
                     emailPromptLayout.setVisibility(View.GONE);
                     emailCodePromptLayout.setVisibility(View.VISIBLE);
                 }
@@ -134,6 +139,46 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.sign_up_button);
         rememberBox = findViewById(R.id.remember_me_checkbox_signup);
 
+        isEnterLocked = true;
+        enterPasswordLockButton = findViewById(R.id.unlock_button_for_password_enter);
+        enterPasswordLockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isEnterLocked){
+                    passwordET.setTransformationMethod(null);
+                    enterPasswordLockButton.setImageResource(R.drawable.ic_lock_open);
+                }
+
+                else{
+                    passwordET.setTransformationMethod(new PasswordTransformationMethod());
+                    enterPasswordLockButton.setImageResource(R.drawable.ic_lock);
+                }
+
+                isEnterLocked = !isEnterLocked;
+            }
+        });
+
+        isConfirmLocked = true;
+        confirmPasswordLockButton = findViewById(R.id.unlock_button_for_password_confirm);
+        confirmPasswordLockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isConfirmLocked){
+                    confirmPasswordET.setTransformationMethod(null);
+                    confirmPasswordLockButton.setImageResource(R.drawable.ic_lock_open);
+                }
+
+                else{
+                    confirmPasswordET.setTransformationMethod(new PasswordTransformationMethod());
+                    confirmPasswordLockButton.setImageResource(R.drawable.ic_lock);
+                }
+
+                isConfirmLocked = !isConfirmLocked;
+            }
+        });
+
         findViewById(R.id.go_back_to_email_from_username).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,19 +199,19 @@ public class SignUpActivity extends AppCompatActivity {
                 if (usernameET.getText().toString().isEmpty())
                     usernameET.setError("Fill in the username");
                 else
-                    username = usernameET.getText().toString();
+                    username = usernameET.getText().toString().trim();
 
                 if (nameET.getText().toString().isEmpty())
                     nameET.setError("Fill in the name");
 
                 else
-                    name = nameET.getText().toString();
+                    name = nameET.getText().toString().trim();
 
                 if (passwordET.getText().toString().isEmpty())
                     passwordET.setError("Fill in the password");
 
                 else
-                    password = passwordET.getText().toString();
+                    password = passwordET.getText().toString().trim();
 
                 signUp();
             }

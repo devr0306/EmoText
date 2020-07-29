@@ -11,6 +11,7 @@
         android:layout_width = "0dp"
         android:layout_height="wrap_content"
         android:id="@+id/email_and_code_signup_layout"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline_fragment_2"
         app:layout_constraintStart_toStartOf="@+id/left_guideline_fragment_2"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +49,8 @@
                 android:textColorHint="@color/darkGrey"
                 android:layout_below="@+id/email_enter_textview"
                 android:background="@drawable/edit_text_border"
-                android:layout_marginTop="30dp">
+                android:layout_marginTop="30dp"
+                android:inputType="textEmailAddress">
             </EditText>
 
             <Button
@@ -105,7 +107,8 @@
                 android:background="@drawable/edit_text_border"
                 android:fontFamily="@font/neris_light"
                 android:hint="Code"
-                android:textColorHint="@color/darkGrey"/>
+                android:textColorHint="@color/darkGrey"
+                android:inputType="number"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -141,7 +144,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/other_fields_signup_layout"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline_fragment_2"
         app:layout_constraintStart_toStartOf="@+id/left_guideline_fragment_2"
@@ -177,7 +180,8 @@
                 android:fontFamily="@font/neris_light"
                 android:textColorHint="@color/darkGrey"
                 android:background="@drawable/edit_text_border"
-                android:hint="Name"/>
+                android:hint="Name"
+                android:inputType="text"/>
 
             <EditText
                 android:id="@+id/ask_username_edit_text"
@@ -188,36 +192,74 @@
                 android:fontFamily="@font/neris_light"
                 android:textColorHint="@color/darkGrey"
                 android:background="@drawable/edit_text_border"
-                android:hint="Username"/>
+                android:hint="Username"
+                android:inputType="text"/>
 
-            <EditText
-                android:id="@+id/ask_password_edit_text"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/ask_password_edit_text_layout"
                 android:layout_below="@+id/ask_username_edit_text"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/neris_light"
-                android:textColorHint="@color/darkGrey"
-                android:background="@drawable/edit_text_border"
-                android:hint="Password"/>
+                android:layout_marginTop="10dp">
 
-            <EditText
-                android:id="@+id/confirm_password_edit_text"
-                android:layout_width="match_parent"
+                <EditText
+                    android:id="@+id/ask_password_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/neris_light"
+                    android:textColorHint="@color/darkGrey"
+                    android:background="@drawable/edit_text_border"
+                    android:hint="Password"
+                    android:inputType="textPassword"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_lock"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="2dp"
+                    android:id="@+id/unlock_button_for_password_enter"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ask_password_edit_text"
+                android:layout_below="@+id/ask_password_edit_text_layout"
                 android:layout_marginTop="10dp"
-                android:fontFamily="@font/neris_light"
-                android:textColorHint="@color/darkGrey"
-                android:background="@drawable/edit_text_border"
-                android:hint="Confirm Password"/>
+                android:id="@+id/confirm_password_edit_text_layout">
+
+                <EditText
+                    android:id="@+id/confirm_password_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/neris_light"
+                    android:textColorHint="@color/darkGrey"
+                    android:background="@drawable/edit_text_border"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_lock"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="2dp"
+                    android:id="@+id/unlock_button_for_password_confirm"/>
+
+            </RelativeLayout>
 
             <CheckBox
                 android:id="@+id/remember_me_checkbox_signup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/confirm_password_edit_text"
+                android:layout_below="@+id/confirm_password_edit_text_layout"
                 android:text="Remember Me"
                 android:textColor="@color/white"/>
 
