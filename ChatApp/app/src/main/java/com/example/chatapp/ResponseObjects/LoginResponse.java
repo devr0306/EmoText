@@ -1,8 +1,8 @@
-package com.example.chatapp.Models.API;
+package com.example.chatapp.ResponseObjects;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DefaultResponse {
+public class LoginResponse {
 
     @SerializedName("success")
     boolean success;
@@ -10,9 +10,13 @@ public class DefaultResponse {
     @SerializedName("message")
     String message;
 
-    public DefaultResponse(boolean success, String message) {
+    @SerializedName("token")
+    String token;
+
+    public LoginResponse(boolean success, String message, String token) {
         this.success = success;
         this.message = message;
+        this.token = token;
     }
 
     public boolean isSuccess() {
@@ -29,5 +33,13 @@ public class DefaultResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

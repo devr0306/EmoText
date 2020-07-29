@@ -1,4 +1,4 @@
-package com.example.chatapp.Models.API;
+package com.example.chatapp.ResponseObjects;
 
 import com.example.chatapp.Models.app.User;
 import com.google.gson.annotations.SerializedName;

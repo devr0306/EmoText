@@ -1,4 +1,4 @@
-package com.example.chatapp.Models.API;
+package com.example.chatapp.ResponseObjects;
 
 import com.example.chatapp.Models.app.User;
 import com.google.gson.annotations.SerializedName;
@@ -14,20 +14,20 @@ public class UserListResponse {
     @SerializedName("message")
     String message;
 
-    @SerializedName("contacts")
-    User[] contacts;
+    @SerializedName("people")
+    User[] people;
 
     public UserListResponse(boolean success, String message, User[] contacts) {
         this.success = success;
         this.message = message;
-        this.contacts = contacts;
+        this.people = contacts;
     }
 
     public ArrayList<User> convertToList(){
 
         ArrayList<User> userList = new ArrayList<>();
 
-        for(User us: contacts)
+        for(User us: people)
             userList.add(us);
 
         return userList;
@@ -50,10 +50,10 @@ public class UserListResponse {
     }
 
     public User[] getContacts() {
-        return contacts;
+        return people;
     }
 
     public void setContacts(User[] contacts) {
-        this.contacts = contacts;
+        this.people = contacts;
     }
 }
