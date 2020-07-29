@@ -7,26 +7,34 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.chatapp.Models.app.Contact;
+import com.example.chatapp.ResponseObjects.DefaultResponse;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
+import com.example.chatapp.RetrofitClients.ContactsAPIClient;
+import com.example.chatapp.SharedPrefManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPersonRecyclerViewAdapter.AddPeopleViewHolder>{
 
     ArrayList<User> contactsList = new ArrayList<>();
-    Context contactContext;
+    Context addUserContext;
 
     public AddPersonRecyclerViewAdapter(Context context){
 
-        contactContext = context;
+        addUserContext = context;
     }
 
     @NonNull
@@ -44,7 +52,10 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
 
         holder.nameOfPerson.setText(contactsList.get(position).getName());
 
-        Glide.with(contactContext)
+        if(holder.isAdded)
+            holder.addButton.setText("Added");
+
+        Glide.with(addUserContext)
                 .asBitmap()
                 .load(contactsList.get(position).getProfilePictureURL())
                 .into(holder.imageOfPerson);
@@ -52,10 +63,56 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
         holder.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sendRequest(holder, position);
             }
         });
     }
+
+    public void sendRequest(AddPeopleViewHolder holder, int position){
+
+        Call<DefaultResponse> sendRequestCall = ContactsAPIClient
+                .getInstance()
+                .getContactsAPI()
+                .sendFriendRequest(SharedPrefManager.getInstance(addUserContext).getUser().getToken(), contactsList.get(position).getId());
+
+        sendRequestCall.enqueue(new Callback<DefaultResponse>() {
+            @Override
+            public void onResponse(Call<DefaultResponse> call, Response<DefaultResponse> response) {
+
+                if(response.isSuccessful()){
+
+                    DefaultResponse dr = response.body();
+                    Toast.makeText(addUserContext, dr.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    holder.isAdded = true;
+                    holder.addButton.setText("Added");
+                }
+
+                else{
+                    try {
+                        String errorBody = response.errorBody().string();
+                        int index = errorBody.indexOf("\"message\":");
+
+                        if(index != -1){
+
+                            String errorSub = errorBody.substring(index + 10);
+                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                        }
+
+                        Toast.makeText(addUserContext, errorBody, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DefaultResponse> call, Throwable t) {
+                Toast.makeText(addUserContext, t.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     @Override
     public int getItemCount() {
@@ -74,6 +131,8 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
         private CardView contactCard;
         private Button addButton;
 
+        private boolean isAdded;
+
         public AddPeopleViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -81,6 +140,8 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
             imageOfPerson = itemView.findViewById(R.id.image_of_person_for_add);
             contactCard = itemView.findViewById(R.id.add_people_contact_card);
             addButton = itemView.findViewById(R.id.add_button);
+
+            isAdded = false;
         }
     }
 }
