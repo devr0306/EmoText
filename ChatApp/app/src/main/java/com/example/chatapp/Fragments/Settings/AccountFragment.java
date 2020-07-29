@@ -1,7 +1,5 @@
 package com.example.chatapp.Fragments.Settings;
 
-import android.accounts.Account;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,14 +12,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.chatapp.Models.API.DefaultResponse;
+import com.example.chatapp.ResponseObjects.DefaultResponse;
 import com.example.chatapp.R;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 import com.example.chatapp.SharedPrefManager;
 import com.example.chatapp.StartActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 

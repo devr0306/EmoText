@@ -26,24 +26,25 @@
 
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_pic_container_account">
+
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_pic_container_account">
+            android:text="Sign Out"
+            android:textSize="20dp"
+            android:padding="5dp"
+            android:id="@+id/sign_out_text"
+            android:fontFamily="@font/neris_semi_bold"
+            android:layout_marginHorizontal="10dp"
+            android:textColor="@color/blue"/>
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sign Out"
-                android:textSize="20dp"
-                android:id="@+id/sign_out_text"
-                android:fontFamily="@font/neris_semi_bold"
-                android:layout_marginHorizontal="10dp"
-                android:textColor="@color/blue"/>
-
-        </RelativeLayout>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

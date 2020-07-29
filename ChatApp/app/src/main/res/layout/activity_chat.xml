@@ -13,7 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:cardCornerRadius="4dp"
-        android:foreground="@color/colorPrimaryDark"/>
+        android:foreground="@color/lightGrey"/>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimaryDark">
+            android:background="@color/lightGrey">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/person_image"
@@ -49,7 +49,7 @@
                 android:layout_marginStart="5dp"
                 android:fontFamily="serif"
                 android:text="Name"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="38sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
