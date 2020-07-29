@@ -41,14 +41,14 @@ public class CameraTabFragment extends Fragment {
     private View cameraTabView;
     private static final int REQUEST_CODE_PERMISSIONS = 101;
     private static final String[] REQUIRED_PERMISSIONS = {"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
+    private ImageCapture imageCap;
 
     private MainActivity mainAct;
 
     private String filePath;
 
     private TextureView cameraView;
-    private ImageView captureButton, cameraFlipButton, flashButton;
-    RelativeLayout chatTabButton, peopleTabButton;
+    private ImageView cameraFlipButton, flashButton;
 
 
     @Override
@@ -69,17 +69,15 @@ public class CameraTabFragment extends Fragment {
         mainAct = (MainActivity) context;
     }
 
-    public void init(){
+    public void init() {
 
         cameraView = cameraTabView.findViewById(R.id.texture_for_camera);
-        captureButton = cameraTabView.findViewById(R.id.capture_button);
-        chatTabButton = cameraTabView.findViewById(R.id.chat_tab_button);
-        peopleTabButton = cameraTabView.findViewById(R.id.people_tab_button);
         flashButton = cameraTabView.findViewById(R.id.flash_button);
         cameraFlipButton = cameraTabView.findViewById(R.id.flip_camera_button);
 
-
-        changeTabsOnClickListeners();
+        ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
+                setTargetRotation(mainAct.getWindowManager().getDefaultDisplay().getRotation()).build();
+        imageCap = new ImageCapture(imageCaptureConfig);
 
         if(hasAllPermissions()){
             startCamera();
@@ -127,35 +125,29 @@ public class CameraTabFragment extends Fragment {
             }
         });
 
+        CameraX.bindToLifecycle(this, preview, imageCap);
+    }
+
+    public void captureImage(MainActivity mainActivity){
+
         ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
-                setTargetRotation(mainAct.getWindowManager().getDefaultDisplay().getRotation()).build();
-        final ImageCapture imageCap = new ImageCapture(imageCaptureConfig);
+                setTargetRotation(mainActivity.getWindowManager().getDefaultDisplay().getRotation()).build();
+        imageCap = new ImageCapture(imageCaptureConfig);
 
-        captureButton.setOnClickListener(new View.OnClickListener() {
+        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        imageCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
             @Override
-            public void onClick(View v) {
+            public void onImageSaved(@NonNull File file) {
 
-                //runnable.run();
+                Toast.makeText(getContext(), "Image saved at " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+            }
 
-                File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                imageCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved(@NonNull File file) {
+            @Override
+            public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
 
-                        Toast.makeText(getContext(), "Image saved at " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-
-                        Toast.makeText(getContext(), "Unsuccessful" + message, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Toast.makeText(getContext(), "Unsuccessful" + message, Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        CameraX.bindToLifecycle(this, preview, imageCap);
     }
 
     public void updateTransform(){
@@ -194,37 +186,4 @@ public class CameraTabFragment extends Fragment {
         matrix.postRotate(rotationDgr, cw, ch);
         cameraView.setTransform(matrix);
     }
-
-    public void changeTabsOnClickListeners(){
-
-        chatTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainAct.changeTab(0);
-            }
-        });
-
-        peopleTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainAct.changeTab(2);
-            }
-        });
-    }
-
-    /*Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-
-            captureButton.setImageResource(R.drawable.camera_clicked_button);
-
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            captureButton.setImageResource(R.drawable.camera_select_button);
-        }
-    };*/
 }
