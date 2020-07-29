@@ -55,11 +55,13 @@ public class LoginActivity extends AppCompatActivity {
                 if(isLocked){
                     passwordLoginET.setTransformationMethod(null);
                     unlockButton.setImageResource(R.drawable.ic_lock_open);
+                    passwordLoginET.setSelection(passwordLoginET.getText().length());
                 }
 
                 else{
                     passwordLoginET.setTransformationMethod(new PasswordTransformationMethod());
                     unlockButton.setImageResource(R.drawable.ic_lock);
+                    passwordLoginET.setSelection(passwordLoginET.getText().length());
                 }
 
                 isLocked = !isLocked;

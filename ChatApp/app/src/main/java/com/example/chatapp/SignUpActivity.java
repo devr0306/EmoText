@@ -148,11 +148,13 @@ public class SignUpActivity extends AppCompatActivity {
                 if(isEnterLocked){
                     passwordET.setTransformationMethod(null);
                     enterPasswordLockButton.setImageResource(R.drawable.ic_lock_open);
+                    passwordET.setSelection(passwordET.getText().length());
                 }
 
                 else{
                     passwordET.setTransformationMethod(new PasswordTransformationMethod());
                     enterPasswordLockButton.setImageResource(R.drawable.ic_lock);
+                    passwordET.setSelection(passwordET.getText().length());
                 }
 
                 isEnterLocked = !isEnterLocked;
@@ -168,11 +170,13 @@ public class SignUpActivity extends AppCompatActivity {
                 if(isConfirmLocked){
                     confirmPasswordET.setTransformationMethod(null);
                     confirmPasswordLockButton.setImageResource(R.drawable.ic_lock_open);
+                    confirmPasswordET.setSelection(confirmPasswordET.getText().length());
                 }
 
                 else{
                     confirmPasswordET.setTransformationMethod(new PasswordTransformationMethod());
                     confirmPasswordLockButton.setImageResource(R.drawable.ic_lock);
+                    confirmPasswordET.setSelection(confirmPasswordET.getText().length());
                 }
 
                 isConfirmLocked = !isConfirmLocked;
