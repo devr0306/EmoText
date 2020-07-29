@@ -1,8 +1,8 @@
 package com.example.chatapp.APIs;
 
-import com.example.chatapp.Models.API.DefaultResponse;
-import com.example.chatapp.Models.API.LoginResponse;
-import com.example.chatapp.Models.API.UserResponse;
+import com.example.chatapp.ResponseObjects.DefaultResponse;
+import com.example.chatapp.ResponseObjects.LoginResponse;
+import com.example.chatapp.ResponseObjects.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -37,5 +37,10 @@ public interface AuthAPI {
     @GET("get-user-by-token/")
     Call<UserResponse> getUserFromToken(
             @Query("token") String token
+    );
+
+    @GET("get-user-by-id/")
+    Call<UserResponse> getUserById(
+            @Query("id") String id
     );
 }
