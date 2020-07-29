@@ -85,7 +85,7 @@ public class User {
     }
 
     public void addFriend(User user){
-        friends.add(user);
+        friends.add(0, user);
     }
 
     public String getId() {
@@ -152,7 +152,7 @@ public class User {
         this.username = username;
     }
 
-    public int isSeeRealName() {
+    public int getSeeRealName() {
         return seeRealName;
     }
 
@@ -164,11 +164,11 @@ public class User {
         return seeEmail;
     }
 
-    public void setSeeEmail(int seeEmail) {
+    public void getSeeEmail(int seeEmail) {
         this.seeEmail = seeEmail;
     }
 
-    public int isTextMe() {
+    public int getTextMe() {
         return textMe;
     }
 
@@ -192,7 +192,7 @@ public class User {
         this.lastSeen = lastSeen;
     }
 
-    public int isAddToGroupChats() {
+    public int getAddToGroupChats() {
         return addToGroupChats;
     }
 
