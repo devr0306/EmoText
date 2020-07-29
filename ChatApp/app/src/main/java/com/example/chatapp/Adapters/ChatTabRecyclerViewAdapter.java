@@ -14,19 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.ChatActivity;
-import com.example.chatapp.Models.app.Contact;
+import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
 
 import java.util.ArrayList;
 
 public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecyclerViewAdapter.ViewHolder> {
 
-    ArrayList<Contact> contactsList = new ArrayList<>();
-    Context contactContext;
+    ArrayList<User> usersList = new ArrayList<>();
+    Context userContext;
 
     public ChatTabRecyclerViewAdapter(Context context){
 
-        contactContext = context;
+        userContext = context;
     }
 
     @NonNull
@@ -42,33 +42,33 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-        holder.nameOfPerson.setText(contactsList.get(position).getName());
+        holder.nameOfPerson.setText(usersList.get(position).getName());
 
-        Glide.with(contactContext)
+        Glide.with(userContext)
                 .asBitmap()
-                .load(contactsList.get(position).getImageURL())
+                .load(usersList.get(position).getProfilePictureURL())
                 .into(holder.imageOfPerson);
 
-        holder.contactCard.setOnClickListener(new View.OnClickListener() {
+        holder.UserCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent chatIntent = new Intent(contactContext, ChatActivity.class);
+                Intent chatIntent = new Intent(userContext, ChatActivity.class);
                 chatIntent.putExtra("nameOfPerson", holder.nameOfPerson.getText().toString());
-                chatIntent.putExtra("imageOfPerson", contactsList.get(position).getImageURL());
+                chatIntent.putExtra("imageOfPerson", usersList.get(position).getProfilePictureURL());
 
-                contactContext.startActivity(chatIntent);
+                userContext.startActivity(chatIntent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return contactsList.size();
+        return usersList.size();
     }
 
-    public void setcontactsList(ArrayList<Contact> contactsList){
-        this.contactsList = contactsList;
+    public void setusersList(ArrayList<User> usersList){
+        this.usersList = usersList;
         notifyDataSetChanged();
     }
 
@@ -76,14 +76,14 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
 
         private ImageView imageOfPerson;
         private TextView nameOfPerson;
-        private CardView contactCard;
+        private CardView UserCard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nameOfPerson = itemView.findViewById(R.id.nameOfPerson);
             imageOfPerson = itemView.findViewById(R.id.image_of_person);
-            contactCard = itemView.findViewById(R.id.contactCard);
+            UserCard = itemView.findViewById(R.id.contactCard);
         }
     }
 
