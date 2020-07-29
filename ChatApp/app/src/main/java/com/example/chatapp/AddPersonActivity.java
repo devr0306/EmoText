@@ -1,25 +1,28 @@
 package com.example.chatapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.chatapp.Adapters.AddPersonRecyclerViewAdapter;
-import com.example.chatapp.Models.API.UserListResponse;
+import com.example.chatapp.ResponseObjects.UserListResponse;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.RetrofitClients.ContactsAPIClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +36,9 @@ public class AddPersonActivity extends AppCompatActivity {
     private ArrayList<User> userList;
 
     private EditText addEditText;
+
+    private int mainPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +48,16 @@ public class AddPersonActivity extends AppCompatActivity {
     }
 
     public void init(){
+
+        Intent fromMain = getIntent();
+
+        if(fromMain != null){
+
+            int position = fromMain.getIntExtra("position", -1);
+
+            if(position != -1)
+                mainPosition = position;
+        }
 
         findViewById(R.id.layout_for_friend_request_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +69,7 @@ public class AddPersonActivity extends AppCompatActivity {
         findViewById(R.id.back_arrow_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AddPersonActivity.this, MainActivity.class));
+                animateOut();
             }
         });
 
@@ -78,7 +94,6 @@ public class AddPersonActivity extends AppCompatActivity {
                 return true;
             }
         });
-        setEditTextAndList();
 
     }
 
@@ -96,13 +111,30 @@ public class AddPersonActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
 
                     UserListResponse ulr = response.body();
-                    userList = ulr.convertToList();
-                    Toast.makeText(AddPersonActivity.this, userList.toString(), Toast.LENGTH_SHORT).show();
-                    addPersonRecyclerViewAdapter.setcontactsList(userList);
+
+                    if(ulr.getContacts() != null){
+
+                        userList = ulr.convertToList();
+                        Toast.makeText(AddPersonActivity.this, userList.toString(), Toast.LENGTH_SHORT).show();
+                        addPersonRecyclerViewAdapter.setcontactsList(userList);
+                    }
+
+                    else
+                        Toast.makeText(AddPersonActivity.this, Arrays.toString(ulr.getContacts()), Toast.LENGTH_SHORT).show();
+
                 }
                 else{
                     try {
-                        Toast.makeText(AddPersonActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        String errorBody = response.errorBody().string();
+                        int index = errorBody.indexOf("\"message\":");
+
+                        if(index != -1){
+
+                            String errorSub = errorBody.substring(index + 10);
+                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                        }
+
+                        Toast.makeText(AddPersonActivity.this, errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -115,5 +147,37 @@ public class AddPersonActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void animateOut() {
+        Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_down);
+        slideAnim.setFillAfter(true);
+        slideAnim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationStart(Animation paramAnimation) { }
+            public void onAnimationRepeat(Animation paramAnimation) { }
+            public void onAnimationEnd(Animation paramAnimation) {
+                getWindow().getDecorView().findViewById(android.R.id.content).clearAnimation();
+                finish();
+                // if you call NavUtils.navigateUpFromSameTask(activity); instead,
+                // the screen will flicker once after the animation. Since FrontActivity is
+                // in front of BackActivity, calling finish() should give the same result.
+                overridePendingTransition(0, 0);
+            }
+        });
+        getWindow().getDecorView().findViewById(android.R.id.content).startAnimation(slideAnim);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*Intent backToMain = new Intent(AddPersonActivity.this, MainActivity.class);
+                backToMain.putExtra("position", mainPosition);
+                startActivity(backToMain);*/
+            }
+        }, 500);
+    }
+
+    @Override
+    public void onBackPressed() {
+        animateOut();
+        return;
     }
 }

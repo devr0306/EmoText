@@ -15,7 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AddPersonActivity"></activity>
+        <activity
+            android:name=".UserInfoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Transparent"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity
+            android:name=".AddPersonActivity"
+            android:configChanges="orientation"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Transparent"></activity>
         <activity
             android:name=".RequestsActivity"
             android:configChanges="orientation"
