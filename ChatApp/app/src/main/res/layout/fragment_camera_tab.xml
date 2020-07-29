@@ -4,135 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.CameraTabFragment">
+    tools:context=".Fragments.CameraTabFragment"
+    android:background="@color/black">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/texture_for_camera"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:id="@+id/flash_button"
+        app:srcCompat="@drawable/ic_flash_on"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/top_layout_for_camera"
-        android:background="@color/black">
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="15dp"
+        android:layout_marginStart="30dp"
+        android:elevation="5dp">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:id="@+id/flash_button"
-            app:srcCompat="@drawable/ic_flash_on"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="10dp"
-            android:layout_marginStart="30dp">
+    </androidx.appcompat.widget.AppCompatImageView>
 
-        </androidx.appcompat.widget.AppCompatImageView>
+    <ImageView
+        android:id="@+id/flip_camera_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_flip_camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="10dp"
+        android:tint="@color/white"
+        android:elevation="5dp">
 
-        <ImageView
-            android:id="@+id/flip_camera_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_flip_camera"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="30dp"
-            android:tint="@color/white">
+    </ImageView>
 
-        </ImageView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextureView
         android:id="@+id/texture_for_camera"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/layout_for_capture_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_layout_for_camera">
-    </TextureView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_for_capture_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/black">
+        app:layout_constraintTop_toTopOf="parent">
+    </TextureView>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/chat_tab_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="30dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/image_for_chat_button"
-                app:srcCompat="@drawable/chat_bubble"
-                android:tint="@color/white"
-                android:layout_centerHorizontal="true"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chats"
-                android:textColor="@color/white"
-                android:fontFamily="@font/neris_black"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/image_for_chat_button"/>
-
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/capture_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/camera_select_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginVertical="10dp">
-
-        </ImageView>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/people_tab_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="30dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/image_for_people_button"
-                android:src="@drawable/ic_person"
-                android:tint="@color/white"
-                android:layout_centerHorizontal="true"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Friends"
-                android:textColor="@color/white"
-                android:fontFamily="@font/neris_black"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/image_for_people_button"/>
-
-        </RelativeLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
