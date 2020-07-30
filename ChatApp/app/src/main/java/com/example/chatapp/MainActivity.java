@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -28,6 +29,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.Adapters.MainViewPagerAdapter;
 import com.example.chatapp.Fragments.CameraTabFragment;
+import com.example.chatapp.Models.app.SwipeListener;
+import com.example.chatapp.Models.app.SwipeListenerInterface;
+import com.hannesdorfmann.swipeback.Position;
+import com.hannesdorfmann.swipeback.SwipeBack;
+import com.hannesdorfmann.swipeback.transformer.SlideSwipeBackTransformer;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,125 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private MainViewPagerAdapter mainViewPagerAdapter;
 
     private int currentPosition = 1;
-
-    /*private BottomNavigationView mainNavView;
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-            switch(item.getItemId()){
-
-                case R.id.chat_main_menu_tab:
-                    mainViewPager.setCurrentItem(0);
-                    break;
-
-                case R.id.camera_main_menu_tab:
-                    mainViewPager.setCurrentItem(1);
-                    break;
-
-                case R.id.interact_main_menu_tab:
-                    mainViewPager.setCurrentItem(2);
-                    break;
-            }
-            return true;
-        }
-    };
-*/
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-
-            switch(position){
-
-                case 0:
-
-                    //Toolbar
-                    mainActivityToolbar.setVisibility(View.VISIBLE);
-
-                    //All image modifications
-                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.orange));
-
-                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
-                    int dimensionInDpForChat = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
-                    cameraButton.getLayoutParams().height = dimensionInDpForChat;
-                    cameraButton.getLayoutParams().width = dimensionInDpForChat;
-                    cameraButton.requestLayout();
-
-                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
-
-                    //All text modifications
-                    chatButtonText.setTypeface(boldNeris);
-                    chatButtonText.setTextColor(getResources().getColor(R.color.orange));
-
-                    peopleButtonText.setTypeface(lightNeris);
-                    peopleButtonText.setTextColor(getResources().getColor(R.color.darkGrey));
-                    break;
-
-                case 1:
-
-                    //Toolbar
-                    mainActivityToolbar.setVisibility(View.GONE);
-
-
-
-                    //All image modifications
-                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.grey));
-
-                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.white));
-                    int dimensionInDpForCamera = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
-                    cameraButton.getLayoutParams().height = dimensionInDpForCamera;
-                    cameraButton.getLayoutParams().width = dimensionInDpForCamera;
-                    cameraButton.requestLayout();
-
-                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.grey));
-
-                    //All text modifications
-                    chatButtonText.setTypeface(lightNeris);
-                    chatButtonText.setTextColor(getResources().getColor(R.color.grey));
-
-                    peopleButtonText.setTypeface(lightNeris);
-                    peopleButtonText.setTextColor(getResources().getColor(R.color.grey));
-                    break;
-
-                case 2:
-
-                    //Toolbar
-                    mainActivityToolbar.setVisibility(View.VISIBLE);
-
-                    //All image modifications
-                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
-
-                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
-                    int dimensionInDpForPerson = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
-                    cameraButton.getLayoutParams().height = dimensionInDpForPerson;
-                    cameraButton.getLayoutParams().width = dimensionInDpForPerson;
-                    cameraButton.requestLayout();
-
-                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.orange));
-
-                    //All text modifications
-                    chatButtonText.setTypeface(lightNeris);
-                    chatButtonText.setTextColor(getResources().getColor(R.color.darkGrey));
-
-                    peopleButtonText.setTypeface(boldNeris);
-                    peopleButtonText.setTextColor(getResources().getColor(R.color.orange));
-                    break;
-            }
-
-            currentPosition = position;
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,9 +150,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if(currentPosition == 1){
 
-                    CameraTabFragment ctf = (CameraTabFragment) mainViewPagerAdapter.getItem(mainViewPager.getCurrentItem());
-                    ctf.captureImage(MainActivity.this);
-                    Log.d("Success", "It works");
+                    //CameraTabFragment ctf = (CameraTabFragment) mainViewPagerAdapter.getItem(mainViewPager.getCurrentItem());
+                    Log.i("Success", "" + mainViewPager.getCurrentItem());
+                    CameraTabFragment.captureImage(MainActivity.this);
+                    Log.i("Success", "It works");
                 }
                 else
                     changeTab(1);
@@ -279,6 +167,103 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+            switch(position){
+
+                case 0:
+
+                    //Toolbar
+                    mainActivityToolbar.setVisibility(View.VISIBLE);
+
+                    //All image modifications
+                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.orange));
+
+                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
+                    int dimensionInDpForChat = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
+                    cameraButton.getLayoutParams().height = dimensionInDpForChat;
+                    cameraButton.getLayoutParams().width = dimensionInDpForChat;
+                    cameraButton.requestLayout();
+
+                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
+
+                    //All text modifications
+                    chatButtonText.setTypeface(boldNeris);
+                    chatButtonText.setTextColor(getResources().getColor(R.color.orange));
+
+                    peopleButtonText.setTypeface(lightNeris);
+                    peopleButtonText.setTextColor(getResources().getColor(R.color.darkGrey));
+                    break;
+
+                case 1:
+
+                    //Toolbar
+                    mainActivityToolbar.setVisibility(View.GONE);
+
+
+
+                    //All image modifications
+                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.grey));
+
+                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.white));
+                    int dimensionInDpForCamera = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+                    cameraButton.getLayoutParams().height = dimensionInDpForCamera;
+                    cameraButton.getLayoutParams().width = dimensionInDpForCamera;
+                    cameraButton.requestLayout();
+
+                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.grey));
+
+                    //All text modifications
+                    chatButtonText.setTypeface(lightNeris);
+                    chatButtonText.setTextColor(getResources().getColor(R.color.grey));
+
+                    peopleButtonText.setTypeface(lightNeris);
+                    peopleButtonText.setTextColor(getResources().getColor(R.color.grey));
+                    break;
+
+                case 2:
+
+                    //Toolbar
+                    mainActivityToolbar.setVisibility(View.VISIBLE);
+
+                    //All image modifications
+                    chatButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
+
+                    cameraButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.darkGrey));
+                    int dimensionInDpForPerson = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
+                    cameraButton.getLayoutParams().height = dimensionInDpForPerson;
+                    cameraButton.getLayoutParams().width = dimensionInDpForPerson;
+                    cameraButton.requestLayout();
+
+                    peopleButton.setColorFilter(ContextCompat.getColor(MainActivity.this,R.color.orange));
+
+                    //All text modifications
+                    chatButtonText.setTypeface(lightNeris);
+                    chatButtonText.setTextColor(getResources().getColor(R.color.darkGrey));
+
+                    peopleButtonText.setTypeface(boldNeris);
+                    peopleButtonText.setTextColor(getResources().getColor(R.color.orange));
+                    break;
+            }
+
+            currentPosition = position;
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
 
     public void changeTab(int position){
 

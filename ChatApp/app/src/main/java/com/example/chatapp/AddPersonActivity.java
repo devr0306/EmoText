@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chatapp.Adapters.AddPersonRecyclerViewAdapter;
+import com.example.chatapp.Models.app.SwipeListener;
+import com.example.chatapp.Models.app.SwipeListenerInterface;
 import com.example.chatapp.ResponseObjects.UserListResponse;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.RetrofitClients.ContactsAPIClient;
@@ -28,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddPersonActivity extends AppCompatActivity {
+public class AddPersonActivity extends AppCompatActivity implements SwipeListenerInterface {
 
     private RecyclerView addList;
     private AddPersonRecyclerViewAdapter addPersonRecyclerViewAdapter;
@@ -44,6 +46,7 @@ public class AddPersonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_person);
 
+        getThisView().setOnTouchListener(new SwipeListener(this));
         init();
     }
 
@@ -81,6 +84,7 @@ public class AddPersonActivity extends AppCompatActivity {
 
         addList.setAdapter(addPersonRecyclerViewAdapter);
         addList.setLayoutManager(new LinearLayoutManager(AddPersonActivity.this));
+        addList.setOnTouchListener(new SwipeListener(this));
 
         addEditText = findViewById(R.id.edit_text_for_person_add);
 
@@ -115,6 +119,7 @@ public class AddPersonActivity extends AppCompatActivity {
                     if(ulr.getContacts() != null){
 
                         userList = ulr.convertToList();
+
                         Toast.makeText(AddPersonActivity.this, userList.toString(), Toast.LENGTH_SHORT).show();
                         addPersonRecyclerViewAdapter.setcontactsList(userList);
                     }
@@ -156,15 +161,13 @@ public class AddPersonActivity extends AppCompatActivity {
             public void onAnimationStart(Animation paramAnimation) { }
             public void onAnimationRepeat(Animation paramAnimation) { }
             public void onAnimationEnd(Animation paramAnimation) {
-                getWindow().getDecorView().findViewById(android.R.id.content).clearAnimation();
+                getThisView().clearAnimation();
                 finish();
-                // if you call NavUtils.navigateUpFromSameTask(activity); instead,
-                // the screen will flicker once after the animation. Since FrontActivity is
-                // in front of BackActivity, calling finish() should give the same result.
+
                 overridePendingTransition(0, 0);
             }
         });
-        getWindow().getDecorView().findViewById(android.R.id.content).startAnimation(slideAnim);
+        getThisView().startAnimation(slideAnim);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -175,9 +178,35 @@ public class AddPersonActivity extends AppCompatActivity {
         }, 500);
     }
 
+    public View getThisView(){
+        return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
+
     @Override
     public void onBackPressed() {
         animateOut();
         return;
+    }
+
+    @Override
+    public void onRightToLeftSwipe(View v) {
+
+    }
+
+    @Override
+    public void onLeftToRightSwipe(View v) {
+
+    }
+
+    @Override
+    public void onTopToBottomSwipe(View v) {
+
+        if(!addList.canScrollVertically(-1))
+            animateOut();
+    }
+
+    @Override
+    public void onBottomToTopSwipe(View v) {
+
     }
 }

@@ -16,10 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapp.Models.app.SwipeListener;
+import com.example.chatapp.Models.app.SwipeListenerInterface;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserInfoActivity extends AppCompatActivity {
+public class UserInfoActivity extends AppCompatActivity implements SwipeListenerInterface {
 
     private TextView name;
     private ImageView settingsButton, backButton;
@@ -29,6 +31,8 @@ public class UserInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
+
+        getThisView().setOnTouchListener(new SwipeListener(this));
 
         init();
     }
@@ -104,5 +108,29 @@ public class UserInfoActivity extends AppCompatActivity {
     public String getURLForResource (int resourceId) {
         //use BuildConfig.APPLICATION_ID instead of R.class.getPackage().getName() if both are not same
         return Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" +resourceId).toString();
+    }
+
+    public View getThisView(){
+        return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
+
+    @Override
+    public void onRightToLeftSwipe(View v) {
+
+    }
+
+    @Override
+    public void onLeftToRightSwipe(View v) {
+
+    }
+
+    @Override
+    public void onTopToBottomSwipe(View v) {
+        animateOut();
+    }
+
+    @Override
+    public void onBottomToTopSwipe(View v) {
+
     }
 }
