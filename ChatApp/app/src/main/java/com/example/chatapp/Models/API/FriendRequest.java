@@ -8,14 +8,18 @@ public class FriendRequest {
     private boolean didAccept;
     private boolean didReject;
     private boolean didIgnore;
+    private String createdAt;
+    private String updatedAt;
 
-    public FriendRequest(String id, String userFrom, String userTo, boolean didAccept, boolean didReject, boolean didIgnore) {
+    public FriendRequest(String id, String userFrom, String userTo, boolean didAccept, boolean didReject, boolean didIgnore, String createdAt, String updatedAt) {
         this.id = id;
         this.userFrom = userFrom;
         this.userTo = userTo;
         this.didAccept = didAccept;
         this.didReject = didReject;
         this.didIgnore = didIgnore;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -64,5 +68,21 @@ public class FriendRequest {
 
     public void setDidIgnore(boolean didIgnore) {
         this.didIgnore = didIgnore;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

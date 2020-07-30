@@ -1,6 +1,7 @@
 package com.example.chatapp.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import retrofit2.Response;
 public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPersonRecyclerViewAdapter.AddPeopleViewHolder>{
 
     ArrayList<User> contactsList = new ArrayList<>();
+    static ArrayList<String> addedUsers = new ArrayList<>();
+
     Context addUserContext;
 
     public AddPersonRecyclerViewAdapter(Context context){
@@ -52,7 +55,7 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
 
         holder.nameOfPerson.setText(contactsList.get(position).getName());
 
-        if(holder.isAdded)
+        if(addedUsers.contains(contactsList.get(position).getUsername()))
             holder.addButton.setText("Added");
 
         Glide.with(addUserContext)
@@ -83,6 +86,9 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
 
                     DefaultResponse dr = response.body();
                     Toast.makeText(addUserContext, dr.getMessage(), Toast.LENGTH_SHORT).show();
+                    addedUsers.add(contactsList.get(position).getUsername());
+
+                    Toast.makeText(addUserContext, addedUsers.toString(), Toast.LENGTH_SHORT).show();
 
                     holder.isAdded = true;
                     holder.addButton.setText("Added");

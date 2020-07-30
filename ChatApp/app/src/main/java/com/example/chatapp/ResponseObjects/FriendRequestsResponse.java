@@ -16,10 +16,10 @@ public class FriendRequestsResponse {
     @SerializedName("message")
     String message;
 
-    @SerializedName("requests")
+    @SerializedName("contacts")
     FriendRequest[] requests;
 
-    @SerializedName("people")
+    @SerializedName("users")
     User[] people;
 
     public FriendRequestsResponse(boolean success, String message, FriendRequest[] requests, User[] people) {

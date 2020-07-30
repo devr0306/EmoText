@@ -27,7 +27,6 @@ public class RequestsActivity extends AppCompatActivity {
 
     private RecyclerView requestsRecyclerView;
     private ArrayList<FriendRequest> friendRequests;
-    private ArrayList<User> contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class RequestsActivity extends AppCompatActivity {
     public void initializeLists(){
 
         friendRequests = new ArrayList<>();
-        contacts = new ArrayList<>();
 
         Call<FriendRequestsResponse> getFriendRequestsCall = ContactsAPIClient
                 .getInstance()
@@ -65,7 +63,8 @@ public class RequestsActivity extends AppCompatActivity {
                     FriendRequestsResponse frr = response.body();
                     Toast.makeText(RequestsActivity.this, Arrays.toString(frr.getRequests()), Toast.LENGTH_SHORT).show();
 
-                    if(frr.getRequests().length != 0){
+
+                    if(frr.getRequests() != null && frr.getRequests().length != 0){
 
                         friendRequests = frr.returnFriendsList();
                         RequestsRecyclerViewAdapter requestsRecyclerViewAdapter = new RequestsRecyclerViewAdapter(RequestsActivity.this);
@@ -74,9 +73,6 @@ public class RequestsActivity extends AppCompatActivity {
                         requestsRecyclerView.setAdapter(requestsRecyclerViewAdapter);
                         requestsRecyclerView.setLayoutManager(new LinearLayoutManager(RequestsActivity.this));
                     }
-
-                    if(frr.getPeople().length != 0)
-                        contacts = frr.returnPeopleList();
                 }
 
                 else{
