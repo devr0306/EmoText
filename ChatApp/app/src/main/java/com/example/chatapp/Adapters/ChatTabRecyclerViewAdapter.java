@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,10 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.ChatActivity;
+import com.example.chatapp.MainActivity;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecyclerViewAdapter.ViewHolder> {
 
@@ -44,10 +46,17 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
 
         holder.nameOfPerson.setText(usersList.get(position).getName());
 
-        Glide.with(userContext)
-                .asBitmap()
-                .load(usersList.get(position).getProfilePictureURL())
-                .into(holder.imageOfPerson);
+        String profileUrl = usersList.get(position).getProfilePictureURL();
+
+        if(profileUrl == null || profileUrl.length() < 1)
+            holder.imageOfPerson.setImageResource(R.drawable.ic_launcher_background);
+
+        else{
+            Glide.with(userContext)
+                    .asBitmap()
+                    .load(profileUrl)
+                    .into(holder.imageOfPerson);
+        }
 
         holder.UserCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +67,7 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
                 chatIntent.putExtra("imageOfPerson", usersList.get(position).getProfilePictureURL());
 
                 userContext.startActivity(chatIntent);
+                ((MainActivity)userContext).overridePendingTransition(R.anim.slide_in_left, 0);
             }
         });
     }
@@ -74,7 +84,7 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView imageOfPerson;
+        private CircleImageView imageOfPerson;
         private TextView nameOfPerson;
         private CardView UserCard;
 

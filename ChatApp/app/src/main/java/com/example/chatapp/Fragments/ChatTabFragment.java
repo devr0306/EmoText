@@ -83,16 +83,16 @@ public class ChatTabFragment extends Fragment {
                 if(response.isSuccessful()){
                     ContactListResponse clr = response.body();
 
-                    if (clr.getContacts() != null) {
+                    if (clr.getUsers() != null && clr.getUsers().length > 0) {
                         Toast.makeText(getContext(), clr.getContacts()[0].getUserTwoName(), Toast.LENGTH_SHORT).show();
-                        Log.d("Contacts size", "" + clr.getContacts().length);
+                        Log.d("Contacts size", "" + clr.getUsers().length);
 
-                        /*users = clr.getUserAsList();
+                        users = clr.getUserAsList();
                         ChatTabRecyclerViewAdapter chatTabRecyclerViewAdapter = new ChatTabRecyclerViewAdapter(contactFragmentView.getContext());
                         chatTabRecyclerViewAdapter.setusersList(users);
 
                         contactsRecyclerView.setAdapter(chatTabRecyclerViewAdapter);
-                        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(contactFragmentView.getContext()));*/
+                        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(contactFragmentView.getContext()));
                     }
 
                     else{
