@@ -7,7 +7,7 @@
     tools:context=".MainActivity"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@android:color/background_dark">
+    android:background="@android:color/background_light">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -55,7 +55,7 @@
             android:layout_height="45dp"
             android:id="@+id/image_for_chat_button"
             app:srcCompat="@drawable/chat_bubble"
-            android:tint="@color/grey"
+            android:tint="@color/darkGrey"
             android:layout_centerHorizontal="true"/>
 
         <TextView
@@ -66,7 +66,7 @@
             android:layout_below="@+id/image_for_chat_button"
             android:fontFamily="@font/neris_semi_bold"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/darkGrey"/>
 
     </RelativeLayout>
 
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@drawable/camera_select_button"
-        android:tint="@color/lightGrey"
+        android:tint="@color/darkGrey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +98,7 @@
             android:layout_height="55dp"
             android:id="@+id/image_for_people_button"
             android:src="@drawable/ic_person"
-            android:tint="@color/grey"
+            android:tint="@color/darkGrey"
             android:layout_centerHorizontal="true"/>
 
         <TextView
@@ -109,7 +109,7 @@
             android:layout_below="@+id/image_for_people_button"
             android:fontFamily="@font/neris_semi_bold"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/darkGrey"/>
 
 
     </RelativeLayout>

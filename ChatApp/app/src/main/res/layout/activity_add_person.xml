@@ -7,7 +7,7 @@
     tools:context=".AddPersonActivity"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@android:color/background_dark">
+    android:background="@android:color/background_light">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -67,8 +67,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/grey">
+            android:layout_height="match_parent">
 
             <TextView
                 android:layout_width="wrap_content"
