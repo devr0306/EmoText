@@ -268,7 +268,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onFailure(Call<DefaultResponse> call, Throwable t) {
 
                 //TODO- Change
-                Toast.makeText(SignUpActivity.this, "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
