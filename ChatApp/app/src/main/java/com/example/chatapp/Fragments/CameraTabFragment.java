@@ -41,11 +41,12 @@ public class CameraTabFragment extends Fragment {
     private View cameraTabView;
     private static final int REQUEST_CODE_PERMISSIONS = 101;
     private static final String[] REQUIRED_PERMISSIONS = {"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
-    private ImageCapture imageCap;
-
     private MainActivity mainAct;
 
-    private String filePath;
+    private static ImageCaptureConfig imageCaptureConfig;
+    private static ImageCapture imageCap;
+    private static String filePath;
+    private static int imageNumber;
 
     private TextureView cameraView;
     private ImageView cameraFlipButton, flashButton;
@@ -75,7 +76,9 @@ public class CameraTabFragment extends Fragment {
         flashButton = cameraTabView.findViewById(R.id.flash_button);
         cameraFlipButton = cameraTabView.findViewById(R.id.flip_camera_button);
 
-        ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
+        imageNumber = 0;
+
+        imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
                 setTargetRotation(mainAct.getWindowManager().getDefaultDisplay().getRotation()).build();
         imageCap = new ImageCapture(imageCaptureConfig);
 
@@ -128,24 +131,32 @@ public class CameraTabFragment extends Fragment {
         CameraX.bindToLifecycle(this, preview, imageCap);
     }
 
-    public void captureImage(MainActivity mainActivity){
+    public static void captureImage(MainActivity mainActivity){
 
         ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
                 setTargetRotation(mainActivity.getWindowManager().getDefaultDisplay().getRotation()).build();
         imageCap = new ImageCapture(imageCaptureConfig);
 
-        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        filePath = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/";
+
+        String fileName = "IMAGE" + imageNumber++ + ".jpg";
+
+        File file = new File(filePath + fileName);
+        Log.i("Success", "File created:  " + file.getAbsolutePath());
+
         imageCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
             @Override
             public void onImageSaved(@NonNull File file) {
 
-                Toast.makeText(getContext(), "Image saved at " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Image saved at " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                Log.i("Success", "Image saved at " + file.getAbsolutePath());
             }
 
             @Override
             public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
 
-                Toast.makeText(getContext(), "Unsuccessful" + message, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Unsuccessful" + message, Toast.LENGTH_SHORT).show();
+                Log.i("Success", cause.toString());
             }
         });
     }
