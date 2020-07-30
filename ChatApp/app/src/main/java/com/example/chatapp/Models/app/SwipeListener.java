@@ -9,7 +9,7 @@ public class SwipeListener implements View.OnTouchListener {
 
     private final String logTag = "Swipe worked";
     private final int MIN_DIST_X = 200;
-    private final int MIN_DIST_Y = 600;
+    private final int MIN_DIST_Y = 500;
     private SwipeListenerInterface activity;
     private float downX, downY, upX, upY;
 
