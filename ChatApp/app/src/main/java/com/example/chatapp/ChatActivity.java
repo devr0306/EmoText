@@ -172,4 +172,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onBottomToTopSwipe(View v) {
 
     }
+
+    @Override
+    public void onBackPressed() {
+        animateOut();
+    }
 }
