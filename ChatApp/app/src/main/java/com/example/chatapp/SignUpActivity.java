@@ -1,11 +1,20 @@
 package com.example.chatapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +29,11 @@ import com.example.chatapp.ResponseObjects.LoginResponse;
 import com.example.chatapp.ResponseObjects.UserResponse;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,6 +41,8 @@ import retrofit2.Response;
 public class SignUpActivity extends AppCompatActivity {
 
     private static Intent toMainActivity;
+    private static final int GALLERY_REQUEST_CODE = 22;
+    private static final int TAKEPHOTO_REQUEST_CODE = 23;
 
     //Username stuff
     private ConstraintLayout layout_for_username_fragment;
@@ -39,6 +53,9 @@ public class SignUpActivity extends AppCompatActivity {
     boolean isEnterLocked, isConfirmLocked;
 
     private CheckBox rememberBox;
+
+    private CircleImageView profilePic;
+    private CardView layoutForPicButtons;
     
     //Email stuff
     private ConstraintLayout emailLayout;
@@ -139,6 +156,27 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.sign_up_button);
         rememberBox = findViewById(R.id.remember_me_checkbox_signup);
 
+        profilePic = findViewById(R.id.set_profile_pic_button);
+        layoutForPicButtons = findViewById(R.id.layout_for_pic_buttons);
+        layoutForPicButtons.setVisibility(View.GONE);
+
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutForPicButtons.setVisibility(View.VISIBLE);
+            }
+        });
+
+        findViewById(R.id.gallery_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent photoPickIntent = new Intent(Intent.ACTION_PICK);
+                photoPickIntent.setType("image/*");
+                startActivityForResult(photoPickIntent, GALLERY_REQUEST_CODE);
+            }
+        });
+
         isEnterLocked = true;
         enterPasswordLockButton = findViewById(R.id.unlock_button_for_password_enter);
         enterPasswordLockButton.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +260,39 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK){
+
+            switch (requestCode){
+
+                case GALLERY_REQUEST_CODE:
+                    Uri selectedImage = data.getData();
+
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                        profilePic.setImageBitmap(bitmap);
+                        layoutForPicButtons.setVisibility(View.GONE);
+
+                        SharedPrefManager.getInstance(SignUpActivity.this).setProfilePic(convertBitToString(bitmap));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+            }
+        }
+    }
+
+    public String convertBitToString(Bitmap bitmap) throws UnsupportedEncodingException {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        return  MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"Title",null);
+
+    }
+
     public void signUp(){
 
         Call<DefaultResponse> signUpCall = AuthRetrofitClient
@@ -246,23 +317,24 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 else {
-                    try {
 
-                        String errorBody = response.errorBody().string();
-                        int index = errorBody.indexOf("\"message\":");
+                            try {
+                                String errorBody = response.errorBody().string();
+                                int index = errorBody.indexOf("\"message\":");
 
-                        if(index != -1){
+                                if (index != -1) {
 
-                            String errorSub = errorBody.substring(index + 10);
-                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                                    String errorSub = errorBody.substring(index + 10);
+                                    errorBody = errorSub.substring(1, errorSub.length() - 2);
+                                }
+
+                                Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-
-                        Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
+        }
 
             @Override
             public void onFailure(Call<DefaultResponse> call, Throwable t) {
@@ -297,20 +369,27 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 else {
-                    try {
-                        String errorBody = response.errorBody().string();
-                        int index = errorBody.indexOf("\"message\":");
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        if(index != -1){
+                            try {
+                                String errorBody = response.errorBody().string();
+                                int index = errorBody.indexOf("\"message\":");
 
-                            String errorSub = errorBody.substring(index + 10);
-                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                                if (index != -1) {
+
+                                    String errorSub = errorBody.substring(index + 10);
+                                    errorBody = errorSub.substring(1, errorSub.length() - 2);
+                                }
+
+                                Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-
-                        Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
+                    });
                 }
             }
 
@@ -341,20 +420,28 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 else {
-                    try {
-                        String errorBody = response.errorBody().string();
-                        int index = errorBody.indexOf("\"message\":");
 
-                        if(index != -1){
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
 
-                            String errorSub = errorBody.substring(index + 10);
-                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                            try {
+                                String errorBody = response.errorBody().string();
+                                int index = errorBody.indexOf("\"message\":");
+
+                                if (index != -1) {
+
+                                    String errorSub = errorBody.substring(index + 10);
+                                    errorBody = errorSub.substring(1, errorSub.length() - 2);
+                                }
+
+                                Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-
-                        Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
+                    });
                 }
             }
 

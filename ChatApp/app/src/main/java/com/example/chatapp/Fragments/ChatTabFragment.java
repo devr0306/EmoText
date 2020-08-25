@@ -1,6 +1,5 @@
 package com.example.chatapp.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,15 +13,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.chatapp.AddPersonActivity;
-import com.example.chatapp.MainActivity;
-import com.example.chatapp.Models.app.Contact;
+import com.example.chatapp.Adapters.ChatTabRecyclerViewAdapter;
+import com.example.chatapp.Models.API.Chat;
+import com.example.chatapp.Models.app.ConvertFieldsToUserObjects;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
-import com.example.chatapp.Adapters.ChatTabRecyclerViewAdapter;
-import com.example.chatapp.ResponseObjects.ContactListResponse;
-import com.example.chatapp.RetrofitClients.ContactsAPIClient;
-import com.example.chatapp.SettingsActivity;
+import com.example.chatapp.ResponseObjects.ChatListResponse;
+import com.example.chatapp.ResponseObjects.UserListResponse;
+import com.example.chatapp.ResponseObjects.UserResponse;
+import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
+import com.example.chatapp.RetrofitClients.ChatRetrofitClient;
 import com.example.chatapp.SharedPrefManager;
 
 import java.io.IOException;
@@ -33,17 +33,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the  factory method to
- * create an instance of this fragment.
- */
+
 public class ChatTabFragment extends Fragment {
 
-    RecyclerView contactsRecyclerView;
+    //Main View and the TextView for when no chats exist
     View contactFragmentView;
+    private TextView noChats;
+
+    //Everything related to the RecyclerView
     private ArrayList<User> users;
-    private TextView noFriends;
+    RecyclerView chatsRecyclerView;
+    private ChatTabRecyclerViewAdapter chatTabRecyclerViewAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,54 +52,51 @@ public class ChatTabFragment extends Fragment {
         contactFragmentView = inflater.inflate(R.layout.fragment_chat_tab, container, false);
 
         init();
-        setContacts();
+        setLists();
 
         // Inflate the layout for this fragment
-       return contactFragmentView;
+        return contactFragmentView;
     }
 
     public void init(){
 
-        users = new ArrayList<User>();
+        //Initialize Views
+        noChats = contactFragmentView.findViewById(R.id.no_chats_message);
+        noChats.setVisibility(View.GONE);
 
-        noFriends = contactFragmentView.findViewById(R.id.no_friends_message);
-        noFriends.setVisibility(View.GONE);
-
-        contactsRecyclerView = contactFragmentView.findViewById(R.id.contact_recycler_view);
+        //Initialize RecyclerView and Adapter, and link the both
+        chatsRecyclerView = contactFragmentView.findViewById(R.id.chats_recycler_view);
+        chatTabRecyclerViewAdapter = new ChatTabRecyclerViewAdapter(getContext());
+        chatsRecyclerView.setAdapter(chatTabRecyclerViewAdapter);
+        chatsRecyclerView.setLayoutManager(new LinearLayoutManager(contactFragmentView.getContext()));
 
     }
 
-    public void setContacts(){
+    //Set the users ArrayList by first getting the Chats Array and then converting to User ArrayList
+    public void setLists(){
 
-        Call<ContactListResponse> getContactsCall = ContactsAPIClient
+        users = new ArrayList<User>();
+
+        Call<ChatListResponse> getAllChats = ChatRetrofitClient
                 .getInstance()
-                .getContactsAPI()
-                .getContacts(SharedPrefManager.getInstance(getContext()).getUser().getToken());
+                .getChatAPI()
+                .loadChats(SharedPrefManager.getInstance(getContext()).getUser().getToken());
 
-        getContactsCall.enqueue(new Callback<ContactListResponse>() {
+        getAllChats.enqueue(new Callback<ChatListResponse>() {
             @Override
-            public void onResponse(Call<ContactListResponse> call, Response<ContactListResponse> response) {
+            public void onResponse(Call<ChatListResponse> call, Response<ChatListResponse> response) {
 
                 if(response.isSuccessful()){
-                    ContactListResponse clr = response.body();
 
-                    if (clr.getUsers() != null && clr.getUsers().length > 0) {
-                        Toast.makeText(getContext(), clr.getContacts()[0].getUserTwoName(), Toast.LENGTH_SHORT).show();
-                        Log.d("Contacts size", "" + clr.getUsers().length);
+                    ChatListResponse clr = response.body();
 
-                        users = clr.getUserAsList();
-                        ChatTabRecyclerViewAdapter chatTabRecyclerViewAdapter = new ChatTabRecyclerViewAdapter(contactFragmentView.getContext());
-                        chatTabRecyclerViewAdapter.setusersList(users);
+                    Log.i("Testing", Arrays.toString(clr.getChats()));
 
-                        contactsRecyclerView.setAdapter(chatTabRecyclerViewAdapter);
-                        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(contactFragmentView.getContext()));
-                    }
+                    if(clr.getChats() != null && clr.getChats().length > 0)
+                        convertToUsers(clr.getChats());
 
-                    else{
-
-                        noFriends.setVisibility(View.VISIBLE);
-                    }
-
+                    else if(clr.getChats() == null || clr.getChats().length < 1 || users.size() < 1)
+                        noChats.setVisibility(View.VISIBLE);
                 }
 
                 else{
@@ -121,9 +118,58 @@ public class ChatTabFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ContactListResponse> call, Throwable t) {
-                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<ChatListResponse> call, Throwable t) {
+                Log.i("Failure", t.toString());
             }
         });
+    }
+
+    //Convert the chats Array to a User ArrayList
+    public void convertToUsers(Chat[] chats){
+
+        for(Chat chat: chats){
+
+            Call<UserResponse> getUser = AuthRetrofitClient
+                    .getInstance()
+                    .getAuthApi()
+                    .getUserById(chat.getUserID());
+
+
+            getUser.enqueue(new Callback<UserResponse>() {
+                @Override
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+
+                    if (response.isSuccessful()) {
+
+                        UserResponse ur = response.body();
+                        users.add(ur.getUser());
+                        chatTabRecyclerViewAdapter.setUsersList(users);
+
+                    } else {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            int index = errorBody.indexOf("\"message\":");
+
+                            if (index != -1) {
+
+                                String errorSub = errorBody.substring(index + 10);
+                                //errorBody = errorSub.substring(1, errorSub.length() - 2);
+                            }
+
+                            Toast.makeText(getContext(), errorBody, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    Log.i("F up", t.toString());
+                }
+            });
+        }
+
+
     }
 }

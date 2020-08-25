@@ -37,61 +37,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_for_main_activity">
-
     </androidx.viewpager.widget.ViewPager>
 
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/chat_tab_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="20dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:id="@+id/image_for_chat_button"
-            app:srcCompat="@drawable/chat_bubble"
-            android:tint="@color/darkGrey"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_for_chat_button"
-            android:text="Chats"
-            android:layout_below="@+id/image_for_chat_button"
-            android:fontFamily="@font/neris_semi_bold"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/darkGrey"/>
-
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/capture_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/camera_select_button"
-        android:tint="@color/darkGrey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginVertical="25dp">
-
-    </ImageView>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/people_tab_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp">
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="5dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="10dp">
 
         <ImageView
             android:layout_width="55dp"
@@ -110,8 +67,50 @@
             android:fontFamily="@font/neris_semi_bold"
             android:layout_centerHorizontal="true"
             android:textColor="@color/darkGrey"/>
+    </RelativeLayout>
 
 
+    <ImageView
+        android:id="@+id/capture_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/camera_select_button"
+        android:tint="@color/darkGrey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginVertical="20dp"
+        android:padding="5dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chat_tab_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="15dp"
+        android:padding="5dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:id="@+id/image_for_chat_button"
+            app:srcCompat="@drawable/chat_bubble"
+            android:tint="@color/darkGrey"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_for_chat_button"
+            android:text="Chats"
+            android:layout_below="@+id/image_for_chat_button"
+            android:fontFamily="@font/neris_semi_bold"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkGrey"/>
     </RelativeLayout>
 
     <!--<com.google.android.material.bottomnavigation.BottomNavigationView

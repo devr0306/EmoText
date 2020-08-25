@@ -44,19 +44,7 @@ public class UserInfoActivity extends AppCompatActivity implements SwipeListener
         backButton = findViewById(R.id.back_arrow_button_profile);
         profilePic = findViewById(R.id.big_account_profile_image);
 
-        name.setText(SharedPrefManager.getInstance(UserInfoActivity.this).getUser().getName());
-
-        String profilePicUrl = SharedPrefManager.getInstance(UserInfoActivity.this).getUser().getProfilePictureURL();
-
-        if(profilePicUrl == null)
-            profilePic.setImageResource(R.drawable.ic_launcher_background);
-
-        else{
-            Glide.with(UserInfoActivity.this)
-                    .asBitmap()
-                    .load(profilePicUrl)
-                    .into(profilePic);
-        }
+        getIntentInfo();
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +60,36 @@ public class UserInfoActivity extends AppCompatActivity implements SwipeListener
             }
         });
     }
+
+    public void getIntentInfo(){
+
+        Intent getDetails = getIntent();
+
+        if(getDetails != null){
+
+            String userName = getDetails.getStringExtra("name");
+            String userImage = getDetails.getStringExtra("image");
+            boolean toSettings = getDetails.getBooleanExtra("toSettings", false);
+            name.setText(SharedPrefManager.getInstance(UserInfoActivity.this).getUser().getName());
+
+            if(userName != null)
+                name.setText(userName);
+
+            if(userImage == null || userImage.length() < 1)
+                profilePic.setImageResource(R.drawable.ic_launcher_background);
+
+            else{
+                Glide.with(UserInfoActivity.this)
+                        .asBitmap()
+                        .load(userImage)
+                        .into(profilePic);
+            }
+
+            if(!toSettings)
+                settingsButton.setVisibility(View.GONE);
+        }
+    }
+
 
     private void animateOut() {
         Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_down);

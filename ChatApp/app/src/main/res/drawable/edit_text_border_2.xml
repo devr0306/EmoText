@@ -17,7 +17,7 @@
             </padding>
 
             <corners android:radius="20dp"></corners>
-            <stroke android:width="0.5dp"></stroke>
+            <stroke android:width="0.1dp" android:color="#7C7878"></stroke>
         </shape>
 
     </item>

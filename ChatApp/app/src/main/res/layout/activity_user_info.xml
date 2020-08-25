@@ -67,7 +67,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_people_bar_button"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         app:cardCornerRadius="20dp">
 
         <RelativeLayout
@@ -80,7 +80,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_person"
-                android:tint="@color/blue"/>
+                app:tint="@color/blue" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -115,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_person_add"
-                android:tint="@color/blue"/>
+                app:tint="@color/blue"/>
 
             <TextView
                 android:layout_width="wrap_content"

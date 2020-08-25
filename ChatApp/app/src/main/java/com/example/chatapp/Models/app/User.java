@@ -1,8 +1,9 @@
 package com.example.chatapp.Models.app;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class User {
+public class User implements Serializable {
     /*"id": "399f2b30-cd03-11ea-9fb1-af911206c707",
             "name": "dev123",
             "email": "dev123@gmail.com",

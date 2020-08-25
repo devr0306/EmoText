@@ -53,6 +53,15 @@ public class SharedPrefManager {
         return sharedPreferences.getBoolean("save", false) && (sharedPreferences.getString("token", null) != null);
     }
 
+    public void setProfilePic(String profilePic){
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("profilePic", profilePic);
+        editor.apply();
+    }
+
     public User getUser(){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -65,6 +74,7 @@ public class SharedPrefManager {
                 );
 
         user.setToken(sharedPreferences.getString("token", null));
+        user.setProfilePictureURL(sharedPreferences.getString("profilePic", null));
 
         return user;
     }

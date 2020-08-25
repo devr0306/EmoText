@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.ChatTabFragment">
+    tools:context=".Fragments.PeopleTabFragment">
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/neris_semi_bold"
-        android:text="Oops! Looks like you haven't started any chats yet."
+        android:text="Oops! Looks like you haven't added anyone yet."
         android:textAlignment="center"
         android:textSize="24dp"
-        android:id="@+id/no_chats_message"
+        android:id="@+id/no_people_message"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,9 +42,9 @@
         android:padding="10dp"/>-->
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chats_recycler_view"
+        android:id="@+id/contact_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

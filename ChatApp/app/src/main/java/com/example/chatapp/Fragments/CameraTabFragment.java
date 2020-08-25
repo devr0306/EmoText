@@ -6,33 +6,29 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.camera.core.CameraX;
+import androidx.camera.core.AspectRatio;
+import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.Preview;
-import androidx.camera.core.PreviewConfig;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Environment;
 import android.util.Log;
-import android.util.Rational;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.chatapp.MainActivity;
 import com.example.chatapp.R;
+import com.google.common.util.concurrent.ListenableFuture;
 
-import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 @SuppressWarnings("deprecation")
@@ -43,14 +39,14 @@ public class CameraTabFragment extends Fragment {
     private static final String[] REQUIRED_PERMISSIONS = {"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private MainActivity mainAct;
 
-    private static ImageCaptureConfig imageCaptureConfig;
-    private static ImageCapture imageCap;
-    private static String filePath;
-    private static int imageNumber;
 
-    private TextureView cameraView;
+    private PreviewView cameraView;
     private ImageView cameraFlipButton, flashButton;
 
+    int lensFacing = CameraSelector.LENS_FACING_BACK;
+
+    private ImageCapture imageCapture;
+    int flashMode = ImageCapture.FLASH_MODE_OFF;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,21 +62,30 @@ public class CameraTabFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         mainAct = (MainActivity) context;
     }
 
     public void init() {
 
         cameraView = cameraTabView.findViewById(R.id.texture_for_camera);
+
         flashButton = cameraTabView.findViewById(R.id.flash_button);
         cameraFlipButton = cameraTabView.findViewById(R.id.flip_camera_button);
 
-        imageNumber = 0;
 
-        imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
-                setTargetRotation(mainAct.getWindowManager().getDefaultDisplay().getRotation()).build();
-        imageCap = new ImageCapture(imageCaptureConfig);
+        cameraFlipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(lensFacing == CameraSelector.LENS_FACING_BACK)
+                    lensFacing = CameraSelector.LENS_FACING_FRONT;
+
+                else
+                    lensFacing = CameraSelector.LENS_FACING_BACK;
+
+                startCamera();
+            }
+        });
 
         if(hasAllPermissions()){
             startCamera();
@@ -107,61 +112,61 @@ public class CameraTabFragment extends Fragment {
 
     public void startCamera(){
 
-        CameraX.unbindAll();
 
-        Rational aspectRatio = new Rational(cameraView.getWidth(), cameraView.getHeight());
-        Size screen = new Size(cameraView.getWidth(), cameraView.getHeight());
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(getContext());
+        cameraProviderFuture.addListener(() -> {
 
-        PreviewConfig pConfig = new PreviewConfig.Builder().setTargetAspectRatio(aspectRatio).setTargetResolution(screen).build();
-        Preview preview = new Preview(pConfig);
+            try {
 
-        preview.setOnPreviewOutputUpdateListener(new Preview.OnPreviewOutputUpdateListener() {
-            @Override
-            public void onUpdated(Preview.PreviewOutput output) {
+                ProcessCameraProvider processCameraProvider = cameraProviderFuture.get();
+                bindPreview(processCameraProvider);
 
-                ViewGroup parent = (ViewGroup) cameraView.getParent();
-                parent.removeView(cameraView);
-                parent.addView(cameraView);
-
-                cameraView.setSurfaceTexture(output.getSurfaceTexture());
-                updateTransform();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
 
-        CameraX.bindToLifecycle(this, preview, imageCap);
+        }, ContextCompat.getMainExecutor(getContext()));
     }
 
-    public static void captureImage(MainActivity mainActivity){
+    public void bindPreview(ProcessCameraProvider processCameraProvider){
 
-        ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY).
-                setTargetRotation(mainActivity.getWindowManager().getDefaultDisplay().getRotation()).build();
-        imageCap = new ImageCapture(imageCaptureConfig);
+        processCameraProvider.unbindAll();
 
-        filePath = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/";
+        cameraView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
 
-        String fileName = "IMAGE" + imageNumber++ + ".jpg";
+        Preview preview = new Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(Surface.ROTATION_0)
+                .build();
 
-        File file = new File(filePath + fileName);
-        Log.i("Success", "File created:  " + file.getAbsolutePath());
+        CameraSelector cameraSelector = new CameraSelector.Builder()
+                .requireLensFacing(lensFacing)
+                .build();
 
-        imageCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-            @Override
-            public void onImageSaved(@NonNull File file) {
+        imageCapture = new ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(Surface.ROTATION_0)
+                .setFlashMode(flashMode)
+                .build();
 
-                //Toast.makeText(getContext(), "Image saved at " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                Log.i("Success", "Image saved at " + file.getAbsolutePath());
-            }
-
-            @Override
-            public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-
-                //Toast.makeText(getContext(), "Unsuccessful" + message, Toast.LENGTH_SHORT).show();
-                Log.i("Success", cause.toString());
-            }
-        });
+        preview.setSurfaceProvider(cameraView.createSurfaceProvider());
+        processCameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
     }
 
-    public void updateTransform(){
+    public void captureImage(){
+
+        imageCapture = new ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(Surface.ROTATION_0)
+                .setFlashMode(flashMode)
+                .build();
+    }
+
+    /*public void updateTransform(){
 
         Matrix matrix = new Matrix();
         float w = cameraView.getMeasuredWidth();
@@ -195,6 +200,6 @@ public class CameraTabFragment extends Fragment {
                 return;
         }
         matrix.postRotate(rotationDgr, cw, ch);
-        cameraView.setTransform(matrix);
-    }
+        //cameraView.setTransform(matrix);
+    }*/
 }

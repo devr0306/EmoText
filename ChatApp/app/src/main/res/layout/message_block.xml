@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/outside_layout_for_message"
-    android:gravity="right">
+    android:gravity="end"
+    android:id="@+id/outside_layout_for_message">
+
+    <RelativeLayout
+        android:id="@+id/other_user_message_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="2dp"
+        android:layout_marginEnd="150dp"
+        android:background="@drawable/left_message_block"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/other_message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="5dp"
+            android:fontFamily="@font/open_sans"
+            android:lineSpacingMultiplier="0.8"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -12,38 +34,20 @@
         android:background="@drawable/right_message_block"
         android:id="@+id/user_message_layout"
         android:layout_marginStart="150dp"
-        android:layout_marginVertical=".2dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/message_text"
-        android:fontFamily="@font/neris_light"
-        android:textColor="@color/black"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="5dp"
-        android:textSize="18dp"
-        android:lineSpacingMultiplier="0.8"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="150dp"
-        android:background="@drawable/left_message_block"
-        android:id="@+id/other_user_message_layout"
-        android:visibility="gone"
-        android:layout_marginVertical="2dp">
+        android:layout_marginVertical=".2dp"
+        android:layout_marginEnd="1dp"
+        android:visibility="visible">
 
         <TextView
+            android:id="@+id/message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/other_message_text"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="3dp"
-            android:textSize="16dp"/>
+            android:layout_marginVertical="5dp"
+            android:fontFamily="@font/open_sans"
+            android:lineSpacingMultiplier="0.8"
+            android:textColor="#272525"
+            android:textSize="18dp" />
 
     </RelativeLayout>
 

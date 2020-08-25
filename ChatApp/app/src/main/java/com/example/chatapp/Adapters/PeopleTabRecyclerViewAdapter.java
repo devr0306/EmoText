@@ -22,12 +22,12 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecyclerViewAdapter.ViewHolder> {
+public class PeopleTabRecyclerViewAdapter extends RecyclerView.Adapter<PeopleTabRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<User> usersList;
     Context userContext;
 
-    public ChatTabRecyclerViewAdapter(Context context){
+    public PeopleTabRecyclerViewAdapter(Context context){
 
         userContext = context;
         usersList = new ArrayList<>();
@@ -37,7 +37,7 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View indCellView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_tab_recycler_view_ind_cells, parent, false);
+        View indCellView = LayoutInflater.from(parent.getContext()).inflate(R.layout.people_tab_recycler_view_ind_cells, parent, false);
         ViewHolder vh = new ViewHolder(indCellView);
 
         return vh;
@@ -92,7 +92,9 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
     }
 
     public void setUsersList(ArrayList<User> usersList){
-        this.usersList = usersList;
+
+        this.usersList.clear();
+        this.usersList.addAll(usersList);
         notifyDataSetChanged();
     }
 
@@ -105,9 +107,9 @@ public class ChatTabRecyclerViewAdapter extends RecyclerView.Adapter<ChatTabRecy
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameOfPerson = itemView.findViewById(R.id.nameOfPerson);
-            imageOfPerson = itemView.findViewById(R.id.image_of_person);
-            UserCard = itemView.findViewById(R.id.contactCard);
+            nameOfPerson = itemView.findViewById(R.id.name_of_person_in_people);
+            imageOfPerson = itemView.findViewById(R.id.image_of_person_in_people);
+            UserCard = itemView.findViewById(R.id.contact_card_people);
         }
     }
 

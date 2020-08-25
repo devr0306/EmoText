@@ -12,8 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.chatapp.Models.app.Message;
+import com.example.chatapp.Models.API.Message;
 import com.example.chatapp.R;
+import com.example.chatapp.SharedPrefManager;
 
 import java.util.ArrayList;
 
@@ -41,7 +42,7 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
 
         holder.messageText.setText(messagesList.get(position).getText());
 
-        if(messagesList.get(position).checkMessageSide() == 0){
+        if(!messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
             
             holder.userMessageLayout.setVisibility(View.VISIBLE);
             holder.otherUserMessageLayout.setVisibility(View.GONE);
@@ -50,7 +51,7 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             holder.outsideLayout.setGravity(Gravity.END);
         }
 
-        else if(messagesList.get(position).checkMessageSide() == 1){
+        else if(messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
 
             holder.otherUserMessageLayout.setVisibility(View.VISIBLE);
             holder.userMessageLayout.setVisibility(View.GONE);

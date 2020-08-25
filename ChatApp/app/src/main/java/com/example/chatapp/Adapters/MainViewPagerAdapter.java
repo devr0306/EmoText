@@ -2,17 +2,15 @@ package com.example.chatapp.Adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.chatapp.Fragments.CameraTabFragment;
+import com.example.chatapp.Fragments.PeopleTabFragment;
 import com.example.chatapp.Fragments.ChatTabFragment;
-import com.example.chatapp.Fragments.InteractTabFragment;
 
-public class MainViewPagerAdapter extends FragmentPagerAdapter {
+public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public MainViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
@@ -21,17 +19,17 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position){
 
+        switch (position){
             case 0:
-                return new ChatTabFragment();
+                return new PeopleTabFragment();
             case 1:
                 return new CameraTabFragment();
             case 2:
-                return new InteractTabFragment();
-            default:
                 return new ChatTabFragment();
         }
+
+        return null;
     }
 
     @Override
