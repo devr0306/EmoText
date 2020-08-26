@@ -165,7 +165,7 @@ public class User implements Serializable {
         return seeEmail;
     }
 
-    public void getSeeEmail(int seeEmail) {
+    public void setSeeEmail(int seeEmail) {
         this.seeEmail = seeEmail;
     }
 

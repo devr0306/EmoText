@@ -83,7 +83,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             messageRecViewAdapter = new UserMessagesRecyclerViewAdapter(this);
             messageList = new ArrayList<>();
 
-            messagePart = 0;
+            messagePart = 1;
 
             setMessagesRecyclerView();
             getIntentInfo();
@@ -321,6 +321,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     public void loadMessageList(Chat ch){
 
+        Log.i("Testing", "This user: " + person.getId());
         Call<MessageListResponse> loadMessagesCall = ChatRetrofitClient
                 .getInstance()
                 .getChatAPI()
@@ -334,12 +335,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     MessageListResponse ml = response.body();
                     ArrayList<Message> messagesTempList = ml.getMessagesArrayList();
-                    Log.i("Testing", messagesTempList.toString());
 
                     messagesTempList.addAll(messageList);
                     messageList = messagesTempList;
-
-                    Log.i("Testing", messageList.toString());
 
                     messageRecViewAdapter.setMessagesList(messageList);
                 }

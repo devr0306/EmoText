@@ -1,6 +1,7 @@
 package com.example.chatapp.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,10 +41,10 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
     @Override
     public void onBindViewHolder(@NonNull final UserMessagesRecyclerViewAdapter.MessageViewHolder holder, final int position) {
 
-        holder.messageText.setText(messagesList.get(position).getText());
 
-        if(!messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
-            
+        if(messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+
+            holder.messageText.setText(messagesList.get(position).getText());
             holder.userMessageLayout.setVisibility(View.VISIBLE);
             holder.otherUserMessageLayout.setVisibility(View.GONE);
 
@@ -51,8 +52,9 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             holder.outsideLayout.setGravity(Gravity.END);
         }
 
-        else if(messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+        else if(!messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
 
+            holder.otherMessageText.setText(messagesList.get(position).getText());
             holder.otherUserMessageLayout.setVisibility(View.VISIBLE);
             holder.userMessageLayout.setVisibility(View.GONE);
 
@@ -85,6 +87,7 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             
             userMessageLayout = itemView.findViewById(R.id.user_message_layout);
             messageText = itemView.findViewById(R.id.message_text);
+            otherMessageText = itemView.findViewById(R.id.other_message_text);
             
             otherUserMessageLayout = itemView.findViewById(R.id.other_user_message_layout);
             otherMessageText = itemView.findViewById(R.id.other_message_text);
