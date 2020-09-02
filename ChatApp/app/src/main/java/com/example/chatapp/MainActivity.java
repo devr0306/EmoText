@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static FragmentManager mainActivityManager;
 
-    private RelativeLayout chatButtonLayout, peopleButtonLayout;
+    public static RelativeLayout chatButtonLayout, peopleButtonLayout;
     private ImageView chatButton, cameraButton, peopleButton;
     private TextView chatButtonText, peopleButtonText;
 

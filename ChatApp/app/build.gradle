@@ -65,6 +65,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
 
-    //SwipeBack
+    //SwipeBack for Animations TODO- Remove this after motionlayout
     implementation 'com.hannesdorfmann:swipeback:1.0.4'
+
+    //Circle Seekbar for Camera
+    implementation 'com.github.GoodieBag:ProtractorView:v1.2'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.72'
+    implementation 'com.lukelorusso:verticalseekbar:1.2.3'
+
 }

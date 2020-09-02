@@ -42,7 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private static Intent toMainActivity;
     private static final int GALLERY_REQUEST_CODE = 22;
-    private static final int TAKEPHOTO_REQUEST_CODE = 23;
+    private static final int TAKE_PHOTO_REQUEST_CODE = 23;
 
     //Username stuff
     private ConstraintLayout layout_for_username_fragment;
@@ -177,6 +177,15 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.take_picture_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, TAKE_PHOTO_REQUEST_CODE);
+            }
+        });
+
         isEnterLocked = true;
         enterPasswordLockButton = findViewById(R.id.unlock_button_for_password_enter);
         enterPasswordLockButton.setOnClickListener(new View.OnClickListener() {
@@ -280,6 +289,18 @@ public class SignUpActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    break;
+
+                case TAKE_PHOTO_REQUEST_CODE:
+
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    profilePic.setImageBitmap(photo);
+
+                    try {
+                        SharedPrefManager.getInstance(this).setProfilePic(convertBitToString(photo));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
             }
         }
     }
@@ -290,7 +311,6 @@ public class SignUpActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
         return  MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"Title",null);
-
     }
 
     public void signUp(){
@@ -318,22 +338,22 @@ public class SignUpActivity extends AppCompatActivity {
 
                 else {
 
-                            try {
-                                String errorBody = response.errorBody().string();
-                                int index = errorBody.indexOf("\"message\":");
+                    try {
+                        String errorBody = response.errorBody().string();
+                        int index = errorBody.indexOf("\"message\":");
 
-                                if (index != -1) {
+                        if (index != -1) {
 
-                                    String errorSub = errorBody.substring(index + 10);
-                                    errorBody = errorSub.substring(1, errorSub.length() - 2);
-                                }
-
-                                Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            String errorSub = errorBody.substring(index + 10);
+                            errorBody = errorSub.substring(1, errorSub.length() - 2);
                         }
+
+                        Toast.makeText(SignUpActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
         }
 
             @Override
@@ -457,15 +477,4 @@ public class SignUpActivity extends AppCompatActivity {
         toMainActivity = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(toMainActivity);
     }
-
-    //TODO-Remove this and call
-    /*public void changeFragments(Fragment fragment){
-
-
-            signUpFragmentTransaction = signUpFragmentManager.beginTransaction();
-            signUpFragmentTransaction.replace(R.id.layout_for_fragments, fragment);
-            signUpFragmentTransaction.commit();
-
-    }*/
-
 }

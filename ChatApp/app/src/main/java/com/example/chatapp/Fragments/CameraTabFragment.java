@@ -1,56 +1,84 @@
 package com.example.chatapp.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.camera.core.AspectRatio;
-import androidx.camera.core.CameraControl;
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
-import androidx.camera.core.ImageProxy;
+import androidx.camera.core.MeteringPoint;
+import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.util.Size;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.chatapp.MainActivity;
+import com.example.chatapp.Models.app.FocusCircle;
 import com.example.chatapp.R;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.lukelorusso.verticalseekbar.VerticalSeekBar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 
 @SuppressWarnings("deprecation")
-public class CameraTabFragment extends Fragment {
+public class CameraTabFragment extends Fragment implements View.OnTouchListener {
 
     private View cameraTabView;
     private static final int REQUEST_CODE_PERMISSIONS = 101;
     private static final String[] REQUIRED_PERMISSIONS = {"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private MainActivity mainAct;
 
+    private Camera camera;
+    private ScaleGestureDetector scaleGestureDetector;
+    private GestureDetector gestureDetector;
 
     private PreviewView cameraView;
     private ImageView cameraFlipButton, flashButton, imageCaptureButton;
+    private VerticalSeekBar zoomSeekBar;
+
+    private ImageView capturedImage, sendButton;
+
+    private boolean canFocus = true;
+
+    private ConstraintLayout cameraLayout;
+    private RelativeLayout saveImageLayout;
 
     int lensFacing = CameraSelector.LENS_FACING_BACK;
-
-    private ImageCapture imageCapture;
-    int flashMode = ImageCapture.FLASH_MODE_ON;
+    int flashMode = ImageCapture.FLASH_MODE_OFF;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,7 +105,13 @@ public class CameraTabFragment extends Fragment {
         cameraFlipButton = cameraTabView.findViewById(R.id.flip_camera_button);
         imageCaptureButton = cameraTabView.findViewById(R.id.image_capture_button);
 
+        zoomSeekBar = cameraTabView.findViewById(R.id.zoom_bar);
 
+        capturedImage = cameraTabView.findViewById(R.id.captured_image);
+        sendButton = cameraTabView.findViewById(R.id.save_button);
+
+        cameraLayout = cameraTabView.findViewById(R.id.camera_view_layout);
+        saveImageLayout = cameraTabView.findViewById(R.id.save_image_layout);
 
         cameraFlipButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +129,6 @@ public class CameraTabFragment extends Fragment {
 
         if(hasAllPermissions()){
             startCamera();
-            Log.d("success", "Camera Started");
         }
 
         else{
@@ -110,7 +143,6 @@ public class CameraTabFragment extends Fragment {
             if(ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED){
                 return false;
             }
-            Log.d("success", "Permissions request");
         }
 
         return true;
@@ -118,14 +150,13 @@ public class CameraTabFragment extends Fragment {
 
     public void startCamera(){
 
-
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(getContext());
         cameraProviderFuture.addListener(() -> {
 
             try {
 
                 ProcessCameraProvider processCameraProvider = cameraProviderFuture.get();
-                bindPreview(processCameraProvider, "");
+                bindPreview(processCameraProvider, false);
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -136,12 +167,13 @@ public class CameraTabFragment extends Fragment {
         }, ContextCompat.getMainExecutor(getContext()));
     }
 
-    public void bindPreview(ProcessCameraProvider processCameraProvider, String check){
+    public void bindPreview(ProcessCameraProvider processCameraProvider, boolean picTaken){
 
-        cameraView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
+        Size size = new Size(cameraView.getWidth() * 2, cameraView.getHeight() * 2);
+        cameraView.setImplementationMode(PreviewView.ImplementationMode.PERFORMANCE);
 
         Preview preview = new Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetResolution(size)
                 .setTargetRotation(Surface.ROTATION_0)
                 .build();
 
@@ -149,9 +181,9 @@ public class CameraTabFragment extends Fragment {
                 .requireLensFacing(lensFacing)
                 .build();
 
-        imageCapture = new ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+        ImageCapture imageCapture = new ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setTargetResolution(size)
                 .setTargetRotation(Surface.ROTATION_0)
                 .setFlashMode(flashMode)
                 .build();
@@ -189,16 +221,36 @@ public class CameraTabFragment extends Fragment {
                 ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file)
                         .build();
 
-                imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageSavedCallback() {
+                Bitmap image = cameraView.getBitmap();
+                capturedImage.setImageBitmap(image);
 
-                    @Override
-                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        Log.i("Testing", "It works " + file.getAbsolutePath());
-                    }
+                cameraLayout.setVisibility(View.GONE);
+                MainActivity.peopleButtonLayout.setVisibility(View.GONE);
+                MainActivity.chatButtonLayout.setVisibility(View.GONE);
 
+                saveImageLayout.setVisibility(View.VISIBLE);
+
+                sendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onError(@NonNull ImageCaptureException exception) {
-                        Log.i("Testing", exception.toString());
+                    public void onClick(View v) {
+
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream(file);
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                            out.flush();
+                            out.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        finally {
+
+                            cameraLayout.setVisibility(View.VISIBLE);
+                            MainActivity.peopleButtonLayout.setVisibility(View.VISIBLE);
+                            MainActivity.chatButtonLayout.setVisibility(View.VISIBLE);
+
+                            saveImageLayout.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
@@ -206,43 +258,123 @@ public class CameraTabFragment extends Fragment {
 
         processCameraProvider.unbindAll();
         preview.setSurfaceProvider(cameraView.createSurfaceProvider());
-        processCameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+        camera = processCameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+
+        scaleGestureDetector = new ScaleGestureDetector(getContext(),scaleGestureDetectorListener);
+        gestureDetector = new GestureDetector(getContext(), gestureListener);
+
+        zoomSeekBar.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+
+                Log.i("TestingCamera", "Progress: " + integer);
+                camera.getCameraControl().setLinearZoom((float)integer/(float)100);
+                return null;
+            }
+        });
+
+        cameraView.setOnTouchListener(this);
     }
 
-    /*public void updateTransform(){
 
-        Matrix matrix = new Matrix();
-        float w = cameraView.getMeasuredWidth();
-        float h = cameraView.getMeasuredHeight();
+    public void convertBitToString(Bitmap bitmap) {
 
-        float cw = w / 2f;
-        float ch = h / 2f;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] byteArray = baos.toByteArray();
+    }
 
-        int rotationDgr;
-        int rotation = (int) cameraView.getRotation();
 
-        switch (rotation){
+    private ScaleGestureDetector.OnScaleGestureListener scaleGestureDetectorListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
 
-            case Surface.ROTATION_0:
-                rotationDgr = 0;
-                break;
+            float zoomRatio = camera.getCameraInfo().getZoomState().getValue().getZoomRatio();
+            float delta = detector.getScaleFactor();
+            float multipler = delta >= 1 ? 1.05f : 0.95f;
 
-            case Surface.ROTATION_90:
-                rotationDgr = 90;
-                break;
+            Log.i("TestingCamera", "ZoomRatio: " + zoomRatio + "\nDelta: " + delta + "\nMultiplier" + multipler + "\nProgress" + zoomSeekBar.getProgress());
+            camera.getCameraControl().setZoomRatio(zoomRatio * delta * multipler);
 
-            case Surface.ROTATION_180:
-                rotationDgr = 180;
-                break;
-
-            case Surface.ROTATION_270:
-                rotationDgr = 270;
-                break;
-
-            default:
-                return;
+            return  true;
         }
-        matrix.postRotate(rotationDgr, cw, ch);
-        //cameraView.setTransform(matrix);
-    }*/
+    };
+
+    private GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener(){
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+
+            lensFacing = lensFacing == CameraSelector.LENS_FACING_BACK ? CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK;
+            startCamera();
+
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+
+
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+
+            MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory((float) cameraView.getWidth(), (float) cameraView.getHeight());
+            MeteringPoint point = factory.createPoint(e.getX(), e.getY());
+
+            if(canFocus){
+
+                FocusCircle focusCircle = new FocusCircle(getContext());
+                Canvas canvas = new Canvas();
+
+                cameraView.addView(focusCircle);
+
+                focusCircle.setXY(e.getX(), e.getY());
+                focusCircle.draw(canvas);
+                focusCircle.setElevation(2);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        cameraView.removeView(focusCircle);
+                    }
+                }, 400);
+
+
+                FocusMeteringAction action = new FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AE)
+                        .setAutoCancelDuration(15, TimeUnit.SECONDS)
+                        .build();
+
+                camera.getCameraControl().startFocusAndMetering(action);
+
+                canFocus = false;
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        toggleCanFocus();
+                    }
+                }, 1000);
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        scaleGestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
+
+        return true;
+    }
+
+
+    private void toggleCanFocus(){
+        canFocus = true;
+    }
 }
