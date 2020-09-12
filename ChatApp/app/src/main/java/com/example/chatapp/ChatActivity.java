@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,38 +20,44 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.chatapp.APIs.MessagingAPI;
 import com.example.chatapp.Models.API.Chat;
-import com.example.chatapp.Models.app.ConvertFieldsToUserObjects;
 import com.example.chatapp.Models.API.Message;
 import com.example.chatapp.Adapters.UserMessagesRecyclerViewAdapter;
+import com.example.chatapp.Models.app.SendChat;
 import com.example.chatapp.Models.app.SwipeListener;
 import com.example.chatapp.Models.app.SwipeListenerInterface;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.ResponseObjects.ChatListResponse;
 import com.example.chatapp.ResponseObjects.ChatResponse;
-import com.example.chatapp.ResponseObjects.DefaultResponse;
 import com.example.chatapp.ResponseObjects.MessageListResponse;
 import com.example.chatapp.ResponseObjects.MessageResponse;
 import com.example.chatapp.RetrofitClients.ChatRetrofitClient;
 import com.example.chatapp.RetrofitClients.MessagingRetrofitClient;
+import com.r0adkll.slidr.Slidr;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener, SwipeListenerInterface {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, SwipeListenerInterface, SendChat {
 
     private EditText messagePanel;
     private Guideline topGuideline, textGuideline, messageGuideline;
     private ImageView sendButton;
     private CircleImageView imageOfPerson;
     private TextView nameOfPerson;
+
+    //private GestureDetector chatGestureDetector;
 
     private RecyclerView messagesRecyclerView;
     private UserMessagesRecyclerViewAdapter messageRecViewAdapter;
@@ -60,14 +68,50 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private int messagePart;
 
+    private Calendar calendar;
+    private static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        Slidr.attach(this);
+
         getThisView().setOnTouchListener(new SwipeListener(this));
         init();
     }
+
+    /*private GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener(){
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            final float THRESHOLD = 20;
+            float diffY = e2.getY() - e1.getY();
+
+
+            if (diffY < 0 && diffY >= THRESHOLD) {
+                if (!messagesRecyclerView.canScrollVertically(1)) {
+
+                    Log.i("TestingChat", "It works");
+                    messagesRecyclerView.setPadding(messagesRecyclerView.getPaddingLeft(), messagesRecyclerView.getPaddingTop(),
+                            messagesRecyclerView.getPaddingRight(), messagesRecyclerView.getPaddingBottom() + 1);
+
+                    messagesRecyclerView.setClipToPadding(false);
+                }
+            }
+            return false;
+        }
+    };*/
+
+
+    /*@Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        chatGestureDetector.onTouchEvent(event);
+        return true;
+    }*/
 
     public void init(){
 
@@ -78,12 +122,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             sendButton = findViewById(R.id.sendButton);
             imageOfPerson = findViewById(R.id.person_image);
             nameOfPerson = findViewById(R.id.nameOfPerson);
+
             messagesRecyclerView = findViewById(R.id.user_messages);
 
             messageRecViewAdapter = new UserMessagesRecyclerViewAdapter(this);
             messageList = new ArrayList<>();
 
             messagePart = 1;
+
+            calendar = Calendar.getInstance();
+
+            //chatGestureDetector = new GestureDetector(ChatActivity.this, gestureListener);
 
             setMessagesRecyclerView();
             getIntentInfo();
@@ -96,7 +145,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         messagesRecyclerView.setAdapter(messageRecViewAdapter);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         messagesRecyclerView.scrollBy(0,5);
-        messagesRecyclerView.setOnTouchListener(new SwipeListener(this));
+        //messagesRecyclerView.setOnTouchListener(new SwipeListener(this));
+
+        messagesRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+                if(messageList.size() > 0)
+                    messagesRecyclerView.scrollToPosition(messageList.size() - 1);
+
+            }
+        });
     }
 
     public void getIntentInfo() {
@@ -131,8 +190,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     public void checkIfPersonIsChat(String text){
 
-        Log.i("Testing", text);
-
         if(person != null){
 
             Call<ChatListResponse> getAllContacts = ChatRetrofitClient
@@ -147,7 +204,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     if(response.isSuccessful()){
 
                         ChatListResponse clr = response.body();
-                        Log.i("Testing", Arrays.toString(clr.getChats()));
 
                         if(clr.getChats() == null || clr.getChats().length < 1)
                             createChat(text);
@@ -265,9 +321,43 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     MessageResponse mr = response.body();
 
+                    Message m = mr.getMsg();
+
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    String am_pm = hour/12 == 0 ? "AM" : "PM";
+
+                    hour = hour % 12;
+                    int minute = calendar.get(Calendar.MINUTE);
+
+                    Date date = calendar.getTime();
+                    String time = String.format("%d", hour) + String.format(":%02d ", minute) + am_pm;
+
+                    SimpleDateFormat dateToString = new SimpleDateFormat("MMM, dd yyyy");
+                    String dateString = dateToString.format(date);
+
+                    SimpleDateFormat stringToDate = new SimpleDateFormat("MMM, dd yyyy");
+
+                    try {
+                        date = stringToDate.parse(dateString);
+
+                        String year = dateString.substring(dateString.length() - 4);
+                        dateString = dateString.substring(0, dateString.length() - 5);
+
+                        Log.i("TestingChat", m.getText() + ": " + dateString + "," + date.toString());
+
+                        m.setDate(date);
+                        m.setDateString(dateString);
+                        m.setYear(year);
+                        m.setTime(time);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+
                     messagePanel.setText("");
-                    messageList.add(mr.getMsg());
-                    messageRecViewAdapter.setMessagesList(messageList);
+                    messageRecViewAdapter.addToMessagesList(m);
                 }
 
                 else{
@@ -336,9 +426,43 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     MessageListResponse ml = response.body();
                     ArrayList<Message> messagesTempList = ml.getMessagesArrayList();
 
-                    messagesTempList.addAll(messageList);
-                    messageList = messagesTempList;
+                    for(int i = 0; i < messagesTempList.size(); i++){
 
+                        String[] createdAt = messagesTempList.get(i).getCreatedAt().split("[A-Z]");
+
+                        SimpleDateFormat toDate = new SimpleDateFormat("yyyy-MM-dd");
+
+                        try {
+
+                            Date date = toDate.parse(createdAt[0]);
+                            SimpleDateFormat toString = new SimpleDateFormat("MMM, dd yyyy");
+                            String dateString = toString.format(date);
+
+                            String year = dateString.substring(dateString.length() - 4);
+                            dateString = dateString.substring(0, dateString.length() - 5);
+
+                            String[] times = createdAt[1].split(":");
+
+                            int hour = Integer.parseInt(times[0]);
+                            int minute = Integer.parseInt(times[1]);
+                            String am_pm = hour/12 == 0 ? "AM" : "PM";
+
+                            hour = hour % 12;
+
+                            String time = String.format("%d:%02d %s", hour, minute, am_pm);
+
+                            messagesTempList.get(i).setYear(year);
+                            messagesTempList.get(i).setDate(date);
+                            messagesTempList.get(i).setDateString(dateString);
+                            messagesTempList.get(i).setTime(time);
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    messageList = messagesTempList;
                     messageRecViewAdapter.setMessagesList(messageList);
                 }
 
@@ -371,7 +495,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         return getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
-    @Override
+
+
     public void onRightToLeftSwipe(View v) {
 
     }
@@ -379,12 +504,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onLeftToRightSwipe(View v) {
 
-        if(!messagesRecyclerView.canScrollHorizontally(-1))
-            animateOut();
     }
 
     @Override
     public void onTopToBottomSwipe(View v) {
+
 
     }
 

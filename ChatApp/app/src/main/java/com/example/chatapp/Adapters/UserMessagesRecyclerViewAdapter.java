@@ -41,10 +41,24 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
     @Override
     public void onBindViewHolder(@NonNull final UserMessagesRecyclerViewAdapter.MessageViewHolder holder, final int position) {
 
+        Message message = messagesList.get(position);
 
-        if(messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+        if(position != 0){
 
-            holder.messageText.setText(messagesList.get(position).getText());
+            Log.i("TestingChat", message.getText() + ": " + message.getDate().toString() + messagesList.get(position - 1).getDate().toString());
+            Log.i("TestingChat", message.getText() + ": " + (message.getDate().compareTo(messagesList.get(position - 1).getDate()) == 0));
+        }
+
+
+        if(position == 0 || !(message.getDate().compareTo(messagesList.get(position - 1).getDate()) == 0)){
+
+            holder.dateText.setText(message.getDateString());
+            holder.dateText.setVisibility(View.VISIBLE);
+        }
+
+        if(message.getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+
+            holder.messageText.setText(message.getText());
             holder.userMessageLayout.setVisibility(View.VISIBLE);
             holder.otherUserMessageLayout.setVisibility(View.GONE);
 
@@ -52,9 +66,9 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             holder.outsideLayout.setGravity(Gravity.END);
         }
 
-        else if(!messagesList.get(position).getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+        else {
 
-            holder.otherMessageText.setText(messagesList.get(position).getText());
+            holder.otherMessageText.setText(message.getText());
             holder.otherUserMessageLayout.setVisibility(View.VISIBLE);
             holder.userMessageLayout.setVisibility(View.GONE);
 
@@ -68,15 +82,28 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
         return messagesList.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     public void setMessagesList(ArrayList<Message> messagesList){
         this.messagesList = messagesList;
         notifyDataSetChanged();
     }
 
+    public void addToMessagesList(Message m){
+        this.messagesList.add(m);
+        notifyDataSetChanged();
+    }
+
+
     public class MessageViewHolder extends RecyclerView.ViewHolder{
 
         private LinearLayout outsideLayout;
-        
+
+        private TextView dateText;
+
         private RelativeLayout userMessageLayout, otherUserMessageLayout;
         private TextView messageText, otherMessageText;
         
@@ -84,7 +111,9 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             super(itemView);
 
             outsideLayout = itemView.findViewById(R.id.outside_layout_for_message);
-            
+
+            dateText = itemView.findViewById(R.id.date_textview);
+
             userMessageLayout = itemView.findViewById(R.id.user_message_layout);
             messageText = itemView.findViewById(R.id.message_text);
             otherMessageText = itemView.findViewById(R.id.other_message_text);

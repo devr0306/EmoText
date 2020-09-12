@@ -1,6 +1,7 @@
 package com.example.chatapp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -39,6 +40,7 @@ import android.widget.RelativeLayout;
 import com.example.chatapp.MainActivity;
 import com.example.chatapp.Models.app.FocusCircle;
 import com.example.chatapp.R;
+import com.example.chatapp.SendPictureActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.lukelorusso.verticalseekbar.VerticalSeekBar;
 
@@ -234,7 +236,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                     @Override
                     public void onClick(View v) {
 
-                        FileOutputStream out = null;
+                        /*FileOutputStream out = null;
                         try {
                             out = new FileOutputStream(file);
                             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -243,14 +245,15 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        finally {
+                        finally {*/
 
+                        startActivity(new Intent(getContext(), SendPictureActivity.class));
                             cameraLayout.setVisibility(View.VISIBLE);
                             MainActivity.peopleButtonLayout.setVisibility(View.VISIBLE);
                             MainActivity.chatButtonLayout.setVisibility(View.VISIBLE);
 
                             saveImageLayout.setVisibility(View.GONE);
-                        }
+                        //}
                     }
                 });
             }
@@ -293,8 +296,14 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
             float delta = detector.getScaleFactor();
             float multipler = delta >= 1 ? 1.05f : 0.95f;
 
-            Log.i("TestingCamera", "ZoomRatio: " + zoomRatio + "\nDelta: " + delta + "\nMultiplier" + multipler + "\nProgress" + zoomSeekBar.getProgress());
-            camera.getCameraControl().setZoomRatio(zoomRatio * delta * multipler);
+            float finalZoom = zoomRatio * delta * multipler;
+
+            int zoomProgress = Math.min((int)(finalZoom * 12.5), 100);
+            Log.i("TestingCamera", "zoomProgress: " + zoomProgress);
+
+            zoomSeekBar.setProgress(zoomProgress);
+
+            camera.getCameraControl().setZoomRatio(finalZoom);
 
             return  true;
         }
@@ -307,13 +316,6 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
 
             lensFacing = lensFacing == CameraSelector.LENS_FACING_BACK ? CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK;
             startCamera();
-
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-
 
             return true;
         }
@@ -358,7 +360,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                     public void run() {
                         toggleCanFocus();
                     }
-                }, 1000);
+                }, 600);
             }
             return true;
         }

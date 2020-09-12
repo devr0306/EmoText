@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <activity android:name=".SendPictureActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".UserInfoActivity"
             android:configChanges="orientation"
@@ -43,7 +46,8 @@
             android:configChanges="orientation"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Transparent" />
+            android:theme="@style/Theme.Transparent"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SignUpActivity"
             android:configChanges="orientation"

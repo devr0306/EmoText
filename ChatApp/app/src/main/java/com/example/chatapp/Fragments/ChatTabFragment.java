@@ -15,11 +15,9 @@ import android.widget.Toast;
 
 import com.example.chatapp.Adapters.ChatTabRecyclerViewAdapter;
 import com.example.chatapp.Models.API.Chat;
-import com.example.chatapp.Models.app.ConvertFieldsToUserObjects;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
 import com.example.chatapp.ResponseObjects.ChatListResponse;
-import com.example.chatapp.ResponseObjects.UserListResponse;
 import com.example.chatapp.ResponseObjects.UserResponse;
 import com.example.chatapp.RetrofitClients.AuthRetrofitClient;
 import com.example.chatapp.RetrofitClients.ChatRetrofitClient;

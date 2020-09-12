@@ -35,13 +35,13 @@ public class FocusCircle extends View {
 
         pen = new Paint();
         pen.setColor(Color.LTGRAY);
-        pen.setAlpha(40);
+        pen.setAlpha(80);
         pen.setStrokeWidth(8F);
         pen.setStyle(Paint.Style.FILL);
 
         drawPen = new Paint();
-        drawPen.setColor(Color.GRAY);
-        drawPen.setStrokeWidth(8f);
+        drawPen.setColor(Color.WHITE);
+        drawPen.setStrokeWidth(5f);
         drawPen.setStyle(Paint.Style.STROKE);
     }
 
@@ -56,7 +56,7 @@ public class FocusCircle extends View {
         super.onDraw(canvas);
 
         this.canvas = canvas;
-        canvas.drawCircle(x, y, 100f, pen);
-        canvas.drawCircle(x, y, 110f, drawPen);
+        canvas.drawCircle(x, y, 70f, pen);
+        canvas.drawCircle(x, y, 74f, drawPen);
     }
 }

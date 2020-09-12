@@ -21,4 +21,6 @@
     <color name="blue">#2382CD</color>
     <color name="red">#990011</color>
     <color name="lightGrey">#F4F2F2</color>
+    <color name="azureBlue">#009FF2</color>
+    <color name="tarColor">#8faebe</color>
 </resources>
