@@ -475,6 +475,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void goToNextActivity(){
 
         toMainActivity = new Intent(SignUpActivity.this, MainActivity.class);
+        toMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(toMainActivity);
     }
 }

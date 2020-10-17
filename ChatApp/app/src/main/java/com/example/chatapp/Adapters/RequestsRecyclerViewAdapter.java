@@ -105,10 +105,16 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
                     holder.nameOfPerson.setText(user.getName());
 
-                    Glide.with(contactContext)
-                            .asBitmap()
-                            .load(user.getProfilePictureURL())
-                            .into(holder.imageOfPerson);
+                    if(user.getProfilePictureURL() == null || user.getProfilePictureURL().length() < 1)
+                        holder.imageOfPerson.setImageResource(R.drawable.ic_launcher_background);
+
+
+                    else{
+                        Glide.with(contactContext)
+                                .asBitmap()
+                                .load(user.getProfilePictureURL())
+                                .into(holder.imageOfPerson);
+                    }
                 }
 
                 else{

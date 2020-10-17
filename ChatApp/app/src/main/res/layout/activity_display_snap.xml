@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DisplaySnapActivity">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/friend_profile_pic_snap"
+        android:layout_margin="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_launcher_background"
+        android:elevation="2dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_snap"
+        android:text="Dev Randalpura"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toEndOf="@+id/friend_profile_pic_snap"
+        app:layout_constraintTop_toTopOf="@id/friend_profile_pic_snap"
+        app:layout_constraintBottom_toBottomOf="@id/friend_profile_pic_snap"
+        android:textSize="20dp"
+        android:textColor="@color/grey"
+        android:fontFamily="@font/inter_medium"
+        android:elevation="2dp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/snap_image"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

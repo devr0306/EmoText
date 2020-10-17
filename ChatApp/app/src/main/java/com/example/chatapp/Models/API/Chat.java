@@ -1,5 +1,11 @@
 package com.example.chatapp.Models.API;
 
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Chat {
     /*
         "id": "3310d930-db45-11ea-b0ce-73de8337134c",
@@ -71,5 +77,31 @@ public class Chat {
 
     public void setGroupChat(boolean groupChat) {
         isGroupChat = groupChat;
+    }
+
+    public int compareDateTo(Chat other) throws ParseException {
+
+        Message otherMessage = other.lastMessage;
+
+        Log.i("TestingChat", lastMessage.getCreatedAt() + " " + otherMessage.getCreatedAt());
+
+        SimpleDateFormat toDateThis = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat toDateOther = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        if(lastMessage == null && otherMessage == null)
+            return 0;
+
+        if(lastMessage == null)
+            return 1;
+
+        if(otherMessage == null)
+            return -1;
+
+        Date thisDate = toDateThis.parse(lastMessage.getCreatedAt());
+        Date otherDate = toDateOther.parse(otherMessage.getCreatedAt());
+
+        Log.i("TestingChat", thisDate.toString() + " " + otherDate.toString());
+
+        return thisDate.compareTo(otherDate);
     }
 }

@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
+    android:background="@drawable/main_background"
     tools:context=".ChatActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:foreground="@color/tarColor"
+        android:layout_height="10dp"
+        android:foreground="@drawable/top_bar_gradient"
         app:cardCornerRadius="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,18 +30,28 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/tarColor">
+            android:background="@drawable/top_bar_gradient">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:id="@+id/back_arrow_chat_activity"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_marginStart="10dp"
+                app:tint="@color/black" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/person_image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginVertical="10dp"
-                android:layout_marginStart="10dp"
                 android:elevation="2dp"
                 android:src="@drawable/ic_launcher_background"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/back_arrow_chat_activity"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -69,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="5dp"
-        android:layout_marginVertical="5dp"
+        android:layout_marginBottom="5dp"
         android:paddingBottom="55dp"
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -98,18 +108,20 @@
             android:layout_height="wrap_content"
             android:background="@color/white">
 
-            <ImageButton
-                android:id="@+id/sendButton"
-                android:layout_width="45dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="7dp"
-                android:background="@drawable/sign_in_button_gradient"
-                android:backgroundTint="#00ccf2"
-                android:onClick="onClick"
-                android:src="@drawable/ic_send"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="35dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/sendButton"
+                    android:layout_marginEnd="7dp"
+                    android:background="@drawable/send_button_gradient"
+                    android:onClick="onClick"
+                    android:src="@drawable/ic_send"
+                    android:tint="@color/black"
+                    android:elevation="5dp"/>
+
 
             <EditText
                 android:id="@+id/textPanel"

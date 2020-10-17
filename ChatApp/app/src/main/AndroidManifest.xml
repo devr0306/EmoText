@@ -18,9 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".SendPictureActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".DisplaySnapActivity"></activity>
+        <activity
+            android:name=".SendPictureActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UserInfoActivity"
             android:configChanges="orientation"
@@ -36,7 +37,9 @@
         <activity
             android:name=".RequestsActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".AddPersonActivity"
+            android:theme="@style/Theme.Transparent"/>
         <activity
             android:name=".SettingsActivity"
             android:configChanges="orientation"

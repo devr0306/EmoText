@@ -66,6 +66,7 @@ public class AddPersonActivity extends AppCompatActivity implements SwipeListene
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(AddPersonActivity.this, RequestsActivity.class));
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 

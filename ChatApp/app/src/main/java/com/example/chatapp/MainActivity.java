@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.Adapters.MainViewPagerAdapter;
 import com.example.chatapp.Fragments.CameraTabFragment;
+import com.example.chatapp.Models.app.ViewPagerSwipeControlled;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView chatButtonText, peopleButtonText;
 
     private CircleImageView profileImage;
-    private CardView mainActivityToolbar;
+    private CardView mainActivityToolbar, tempCardView;
 
     private Typeface lightNeris, boldNeris;
 
-    private ViewPager mainViewPager;
+    public static ViewPagerSwipeControlled mainViewPager;
     private MainViewPagerAdapter mainViewPagerAdapter;
 
     private int currentPosition = 1;
@@ -56,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //No StatusBar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         setContentView(R.layout.activity_main);
 
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         cameraButton = findViewById(R.id.capture_button);
         peopleButton = findViewById(R.id.image_for_people_button);
 
+        tempCardView = findViewById(R.id.temporary_support_cardview);
         mainActivityToolbar = findViewById(R.id.toolbar_for_main_activity);
 
         chatButtonText = findViewById(R.id.text_for_chat_button);
@@ -199,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
 
                     peopleButtonText.setTypeface(boldNeris);
                     peopleButtonText.setTextColor(getResources().getColor(R.color.orange));
+
+                    //Show the temporary CardView on the top
+                    tempCardView.setVisibility(View.VISIBLE);
+
                     break;
 
 
@@ -225,6 +232,10 @@ public class MainActivity extends AppCompatActivity {
 
                     peopleButtonText.setTypeface(lightNeris);
                     peopleButtonText.setTextColor(getResources().getColor(R.color.grey));
+
+                    //Hide the temporary CardView on the top
+                    tempCardView.setVisibility(View.GONE);
+
                     break;
 
 
@@ -251,6 +262,10 @@ public class MainActivity extends AppCompatActivity {
 
                     peopleButtonText.setTypeface(lightNeris);
                     peopleButtonText.setTextColor(getResources().getColor(R.color.darkGrey));
+
+                    //Show the temporary CardView on the top
+                    tempCardView.setVisibility(View.VISIBLE);
+
                     break;
             }
 
@@ -272,5 +287,10 @@ public class MainActivity extends AppCompatActivity {
     public String getURLForResource (int resourceId) {
         //use BuildConfig.APPLICATION_ID instead of R.class.getPackage().getName() if both are not same
         return Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" +resourceId).toString();
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.finishAffinity();
     }
 }

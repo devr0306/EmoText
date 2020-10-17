@@ -9,6 +9,13 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
+        android:layout_height="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:foreground="@drawable/top_bar_gradient"
+        app:cardCornerRadius="5dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,18 +27,27 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F4F2F2">
+            android:background="@drawable/top_bar_gradient">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/back_arrow_requests_activity"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                app:tint="@color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Requests"
-                android:textSize="30dp"
+                android:textSize="32dp"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/neris_semi_bold"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/black"/>
 
         </RelativeLayout>

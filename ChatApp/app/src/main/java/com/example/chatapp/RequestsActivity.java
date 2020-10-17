@@ -5,7 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.chatapp.APIs.ContactsAPI;
@@ -14,6 +18,7 @@ import com.example.chatapp.Models.API.FriendRequest;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.ResponseObjects.FriendRequestsResponse;
 import com.example.chatapp.RetrofitClients.ContactsAPIClient;
+import com.r0adkll.slidr.Slidr;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +38,8 @@ public class RequestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
 
+        Slidr.attach(this);
+
         init();
     }
 
@@ -41,8 +48,12 @@ public class RequestsActivity extends AppCompatActivity {
         requestsRecyclerView = findViewById(R.id.requests_recycler_view);
         initializeLists();
 
-
-
+        findViewById(R.id.back_arrow_requests_activity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateOut();
+            }
+        });
     }
 
     public void initializeLists(){
@@ -98,5 +109,33 @@ public class RequestsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public View getThisView(){
+        return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
+
+    private void animateOut() {
+        Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+        slideAnim.setFillAfter(true);
+        slideAnim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationStart(Animation paramAnimation) { }
+            public void onAnimationRepeat(Animation paramAnimation) { }
+            public void onAnimationEnd(Animation paramAnimation) {
+                getThisView().clearAnimation();
+                finish();
+
+                overridePendingTransition(0, 0);
+            }
+        });
+        getThisView().startAnimation(slideAnim);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*Intent backToMain = new Intent(AddPersonActivity.this, MainActivity.class);
+                backToMain.putExtra("position", mainPosition);
+                startActivity(backToMain);*/
+            }
+        }, 500);
     }
 }

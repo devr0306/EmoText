@@ -77,17 +77,18 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
     private boolean canFocus = true;
 
     private ConstraintLayout cameraLayout;
-    private RelativeLayout saveImageLayout;
+    public RelativeLayout saveImageLayout;
 
     int lensFacing = CameraSelector.LENS_FACING_BACK;
     int flashMode = ImageCapture.FLASH_MODE_OFF;
+
+    public static boolean isPicture = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         cameraTabView = inflater.inflate(R.layout.fragment_camera_tab, container, false);
-
         init();
 
         return cameraTabView;
@@ -114,6 +115,12 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
 
         cameraLayout = cameraTabView.findViewById(R.id.camera_view_layout);
         saveImageLayout = cameraTabView.findViewById(R.id.save_image_layout);
+
+        if(isPicture)
+            hideCamera();
+
+        else
+            showCamera();
 
         cameraFlipButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,11 +233,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                 Bitmap image = cameraView.getBitmap();
                 capturedImage.setImageBitmap(image);
 
-                cameraLayout.setVisibility(View.GONE);
-                MainActivity.peopleButtonLayout.setVisibility(View.GONE);
-                MainActivity.chatButtonLayout.setVisibility(View.GONE);
-
-                saveImageLayout.setVisibility(View.VISIBLE);
+                hideCamera();
 
                 sendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -248,12 +251,16 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                         finally {*/
 
                         startActivity(new Intent(getContext(), SendPictureActivity.class));
-                            cameraLayout.setVisibility(View.VISIBLE);
-                            MainActivity.peopleButtonLayout.setVisibility(View.VISIBLE);
-                            MainActivity.chatButtonLayout.setVisibility(View.VISIBLE);
 
-                            saveImageLayout.setVisibility(View.GONE);
                         //}
+                    }
+                });
+
+                cameraTabView.findViewById(R.id.close_picture).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        showCamera();
                     }
                 });
             }
@@ -285,6 +292,27 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] byteArray = baos.toByteArray();
+    }
+
+
+    private void hideCamera(){
+
+        cameraLayout.setVisibility(View.GONE);
+        MainActivity.peopleButtonLayout.setVisibility(View.GONE);
+        MainActivity.chatButtonLayout.setVisibility(View.GONE);
+
+        saveImageLayout.setVisibility(View.VISIBLE);
+        MainActivity.mainViewPager.setSwipeEnabled(false);
+    }
+
+    private void showCamera(){
+
+        cameraLayout.setVisibility(View.VISIBLE);
+        MainActivity.chatButtonLayout.setVisibility(View.VISIBLE);
+        MainActivity.peopleButtonLayout.setVisibility(View.VISIBLE);
+
+        saveImageLayout.setVisibility(View.GONE);
+        MainActivity.mainViewPager.setSwipeEnabled(true);
     }
 
 
@@ -379,4 +407,5 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
     private void toggleCanFocus(){
         canFocus = true;
     }
+
 }

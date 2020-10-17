@@ -3,9 +3,13 @@
     <item>
 
         <shape android:shape="rectangle">
-            <corners android:radius="15dp"></corners>
+            <corners android:radius="19dp"></corners>
 
-            <solid android:color="@color/azureBlue"></solid>
+            <gradient android:startColor="#ffaf7b"
+                android:centerColor="#AE666D"
+                android:endColor="#3a1c71"
+                android:angle="315" />
+
         </shape>
 
     </item>

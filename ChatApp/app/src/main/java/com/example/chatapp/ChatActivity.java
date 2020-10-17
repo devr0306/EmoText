@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.chatapp.Models.API.Chat;
 import com.example.chatapp.Models.API.Message;
 import com.example.chatapp.Adapters.UserMessagesRecyclerViewAdapter;
+import com.example.chatapp.Models.app.ChatSocket;
 import com.example.chatapp.Models.app.SendChat;
 import com.example.chatapp.Models.app.SwipeListener;
 import com.example.chatapp.Models.app.SwipeListenerInterface;
@@ -33,9 +34,13 @@ import com.example.chatapp.ResponseObjects.MessageListResponse;
 import com.example.chatapp.ResponseObjects.MessageResponse;
 import com.example.chatapp.RetrofitClients.ChatRetrofitClient;
 import com.example.chatapp.RetrofitClients.MessagingRetrofitClient;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.r0adkll.slidr.Slidr;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,8 +57,6 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener, SwipeListenerInterface, SendChat {
 
     private EditText messagePanel;
-    private Guideline topGuideline, textGuideline, messageGuideline;
-    private ImageView sendButton;
     private CircleImageView imageOfPerson;
     private TextView nameOfPerson;
 
@@ -69,7 +72,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private int messagePart;
 
     private Calendar calendar;
-    private static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+
+    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +82,42 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         Slidr.attach(this);
 
+        ChatSocket chatSocket = new ChatSocket();
+        mSocket = chatSocket.getSocket();
+
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        mSocket.on(Socket.EVENT_CONNECT, onConnect);
+        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
+        mSocket.connect();
+
         getThisView().setOnTouchListener(new SwipeListener(this));
         init();
     }
+
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.i("Testing Socket", "" + mSocket.connected());
+        }
+    };
+
+    private Emitter.Listener onConnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+
+            Log.i("Testing Socket", "Doesn't work");
+        }
+    };
+
+    private Emitter.Listener onDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+
+            Log.i("Testing Socket", "Disconnected");
+        }
+    };
+
 
     /*private GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener(){
 
@@ -116,10 +153,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void init(){
 
             messagePanel = findViewById(R.id.textPanel);
-            /*topGuideline = findViewById(R.id.top_panel_guideline);
-            textGuideline = findViewById(R.id.typing_panel_guideline);
-            messageGuideline = findViewById(R.id.message_guideline);*/
-            sendButton = findViewById(R.id.sendButton);
             imageOfPerson = findViewById(R.id.person_image);
             nameOfPerson = findViewById(R.id.nameOfPerson);
 
@@ -343,8 +376,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         String year = dateString.substring(dateString.length() - 4);
                         dateString = dateString.substring(0, dateString.length() - 5);
 
-                        Log.i("TestingChat", m.getText() + ": " + dateString + "," + date.toString());
-
                         m.setDate(date);
                         m.setDateString(dateString);
                         m.setYear(year);
@@ -353,8 +384,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-
 
                     messagePanel.setText("");
                     messageRecViewAdapter.addToMessagesList(m);
@@ -383,30 +412,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(ChatActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void animateOut() {
-        Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
-        slideAnim.setFillAfter(true);
-        slideAnim.setAnimationListener(new Animation.AnimationListener() {
-            public void onAnimationStart(Animation paramAnimation) { }
-            public void onAnimationRepeat(Animation paramAnimation) { }
-            public void onAnimationEnd(Animation paramAnimation) {
-                getThisView().clearAnimation();
-                finish();
-
-                overridePendingTransition(0, 0);
-            }
-        });
-        getThisView().startAnimation(slideAnim);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                /*Intent backToMain = new Intent(AddPersonActivity.this, MainActivity.class);
-                backToMain.putExtra("position", mainPosition);
-                startActivity(backToMain);*/
-            }
-        }, 500);
     }
 
     public void loadMessageList(Chat ch){
@@ -495,7 +500,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         return getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
+    private void animateOut() {
+        Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+        slideAnim.setFillAfter(true);
+        slideAnim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationStart(Animation paramAnimation) { }
+            public void onAnimationRepeat(Animation paramAnimation) { }
+            public void onAnimationEnd(Animation paramAnimation) {
+                getThisView().clearAnimation();
+                finish();
 
+                overridePendingTransition(0, 0);
+            }
+        });
+        getThisView().startAnimation(slideAnim);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*Intent backToMain = new Intent(AddPersonActivity.this, MainActivity.class);
+                backToMain.putExtra("position", mainPosition);
+                startActivity(backToMain);*/
+            }
+        }, 500);
+    }
 
     public void onRightToLeftSwipe(View v) {
 

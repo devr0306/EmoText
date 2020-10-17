@@ -76,4 +76,6 @@ dependencies {
     //Slider Activity
     implementation 'com.r0adkll:slidableactivity:2.0.6'
 
+    //Socket.io
+    implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 }

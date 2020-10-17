@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.Models.API.Message;
@@ -43,37 +45,48 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
 
         Message message = messagesList.get(position);
 
-        if(position != 0){
-
-            Log.i("TestingChat", message.getText() + ": " + message.getDate().toString() + messagesList.get(position - 1).getDate().toString());
-            Log.i("TestingChat", message.getText() + ": " + (message.getDate().compareTo(messagesList.get(position - 1).getDate()) == 0));
-        }
-
-
         if(position == 0 || !(message.getDate().compareTo(messagesList.get(position - 1).getDate()) == 0)){
 
             holder.dateText.setText(message.getDateString());
             holder.dateText.setVisibility(View.VISIBLE);
         }
 
+        else{
+
+            if(position > 0 && !messagesList.get(position).getFromId().equals(messagesList.get(position - 1).getFromId()))
+                holder.outsideLayout.setPadding(0, 50, 0, 0);
+
+            else
+                holder.outsideLayout.setPadding(0, 0, 0, 0);
+        }
+
         if(message.getFromId().equals(SharedPrefManager.getInstance(messageContext).getUser().getId())){
+
+            holder.outsideLayout.setGravity(Gravity.END);
+
+            holder.guidelineRight.setGuidelinePercent(1);
+            holder.guidelineLeft.setGuidelinePercent(0.25f + (float)Math.random() * 0.2f);
 
             holder.messageText.setText(message.getText());
             holder.userMessageLayout.setVisibility(View.VISIBLE);
             holder.otherUserMessageLayout.setVisibility(View.GONE);
 
             holder.userMessageLayout.setBackground(messageContext.getDrawable(R.drawable.right_message_block));
-            holder.outsideLayout.setGravity(Gravity.END);
         }
 
         else {
+
+
+            holder.outsideLayout.setGravity(Gravity.START);
+
+            holder.guidelineRight.setGuidelinePercent(0.75f - (float)Math.random() * 0.2f);
+            holder.guidelineLeft.setGuidelinePercent(0);
 
             holder.otherMessageText.setText(message.getText());
             holder.otherUserMessageLayout.setVisibility(View.VISIBLE);
             holder.userMessageLayout.setVisibility(View.GONE);
 
             holder.otherUserMessageLayout.setBackground(messageContext.getDrawable(R.drawable.left_message_block));
-            holder.outsideLayout.setGravity(Gravity.START);
         }
     }
 
@@ -104,8 +117,10 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
 
         private TextView dateText;
 
-        private RelativeLayout userMessageLayout, otherUserMessageLayout;
+        private CardView userMessageLayout, otherUserMessageLayout;
         private TextView messageText, otherMessageText;
+
+        private Guideline guidelineRight, guidelineLeft;
         
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +135,9 @@ public class UserMessagesRecyclerViewAdapter extends RecyclerView.Adapter<UserMe
             
             otherUserMessageLayout = itemView.findViewById(R.id.other_user_message_layout);
             otherMessageText = itemView.findViewById(R.id.other_message_text);
+
+            guidelineRight = itemView.findViewById(R.id.message_guideline_right);
+            guidelineLeft = itemView.findViewById(R.id.message_guideline_left);
         }
     }
 }

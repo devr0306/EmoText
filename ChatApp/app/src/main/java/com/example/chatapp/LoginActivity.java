@@ -119,7 +119,9 @@ public class LoginActivity extends AppCompatActivity {
                     getAndLoadUser(lr.getToken());
 
                     Toast.makeText(LoginActivity.this, lr.getMessage(), Toast.LENGTH_SHORT).show();
+
                     Intent toMainFromLogin = new Intent(LoginActivity.this, MainActivity.class);
+                    toMainFromLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(toMainFromLogin);
 
                 }

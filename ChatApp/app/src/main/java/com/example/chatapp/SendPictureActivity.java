@@ -5,8 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.chatapp.Adapters.PeopleTabRecyclerViewAdapter;
 import com.example.chatapp.Adapters.SendPictureRecyclerViewAdapter;
+import com.example.chatapp.Fragments.CameraTabFragment;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.ResponseObjects.ContactListResponse;
 import com.example.chatapp.RetrofitClients.ContactsAPIClient;
@@ -29,7 +33,6 @@ import retrofit2.Response;
 public class SendPictureActivity extends AppCompatActivity {
 
     private ArrayList<User> friends;
-    private ImageView backArrow;
     private EditText searchFriends;
 
     private RecyclerView friendsRecyclerView;
@@ -51,11 +54,20 @@ public class SendPictureActivity extends AppCompatActivity {
 
         friends = new ArrayList<>();
 
-        backArrow = findViewById(R.id.back_arrow_button_send_activity);
         searchFriends = findViewById(R.id.search_friends_send_activity);
         sendButton = findViewById(R.id.send_button_send_activity);
 
         friendsRecyclerView = findViewById(R.id.send_people_list);
+
+
+        findViewById(R.id.back_arrow_button_send_activity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                CameraTabFragment.isPicture = true;
+                animateOut();
+            }
+        });
 
         sendPictureRecyclerViewAdapter = new SendPictureRecyclerViewAdapter(SendPictureActivity.this);
         sendPictureRecyclerViewAdapter.setFriendsList(friends);
@@ -111,5 +123,39 @@ public class SendPictureActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public View getThisView(){
+        return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
+
+    private void animateOut() {
+        Animation slideAnim = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+        slideAnim.setFillAfter(true);
+        slideAnim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationStart(Animation paramAnimation) { }
+            public void onAnimationRepeat(Animation paramAnimation) { }
+            public void onAnimationEnd(Animation paramAnimation) {
+                getThisView().clearAnimation();
+                finish();
+
+                overridePendingTransition(0, 0);
+            }
+        });
+        getThisView().startAnimation(slideAnim);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*Intent backToMain = new Intent(AddPersonActivity.this, MainActivity.class);
+                backToMain.putExtra("position", mainPosition);
+                startActivity(backToMain);*/
+            }
+        }, 500);
+    }
+
+    @Override
+    public void onBackPressed() {
+        CameraTabFragment.isPicture = true;
+
     }
 }

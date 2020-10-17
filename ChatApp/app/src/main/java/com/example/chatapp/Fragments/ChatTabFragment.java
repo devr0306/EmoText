@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.chatapp.Adapters.ChatTabRecyclerViewAdapter;
 import com.example.chatapp.Models.API.Chat;
+import com.example.chatapp.Models.app.MergeSort;
 import com.example.chatapp.Models.app.User;
 import com.example.chatapp.R;
 import com.example.chatapp.ResponseObjects.ChatListResponse;
@@ -24,6 +25,7 @@ import com.example.chatapp.RetrofitClients.ChatRetrofitClient;
 import com.example.chatapp.SharedPrefManager;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -90,8 +92,14 @@ public class ChatTabFragment extends Fragment {
 
                     Log.i("Testing", Arrays.toString(clr.getChats()));
 
-                    if(clr.getChats() != null && clr.getChats().length > 0)
-                        convertToUsers(clr.getChats());
+                    if(clr.getChats() != null && clr.getChats().length > 0) {
+
+                        try {
+                            convertToUsers(clr.getChats());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     else if(clr.getChats() == null || clr.getChats().length < 1 || users.size() < 1)
                         noChats.setVisibility(View.VISIBLE);
@@ -123,7 +131,9 @@ public class ChatTabFragment extends Fragment {
     }
 
     //Convert the chats Array to a User ArrayList
-    public void convertToUsers(Chat[] chats){
+    public void convertToUsers(Chat[] chats) throws ParseException {
+
+        MergeSort.mergeSort(chats);
 
         for(Chat chat: chats){
 
@@ -167,6 +177,7 @@ public class ChatTabFragment extends Fragment {
                 }
             });
         }
+
 
 
     }
