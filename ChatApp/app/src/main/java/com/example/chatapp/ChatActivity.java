@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -32,12 +33,17 @@ import com.example.chatapp.ResponseObjects.ChatListResponse;
 import com.example.chatapp.ResponseObjects.ChatResponse;
 import com.example.chatapp.ResponseObjects.MessageListResponse;
 import com.example.chatapp.ResponseObjects.MessageResponse;
+import com.example.chatapp.ResponseObjects.SentimentResponse;
 import com.example.chatapp.RetrofitClients.ChatRetrofitClient;
+import com.example.chatapp.RetrofitClients.MachineLearningRetrofitClient;
 import com.example.chatapp.RetrofitClients.MessagingRetrofitClient;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.r0adkll.slidr.Slidr;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -47,159 +53,134 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener, SwipeListenerInterface, SendChat {
 
+    //The EditText which contains the text for texting
     private EditText messagePanel;
+
+    //Name of person and their image on the top panel
     private CircleImageView imageOfPerson;
     private TextView nameOfPerson;
 
-    //private GestureDetector chatGestureDetector;
+    private View sentimentView;
 
+    //RecyclerView, RecyclerViewAdapter, and the List which contains Message objects which will be in the RecyclerView
     private RecyclerView messagesRecyclerView;
     private UserMessagesRecyclerViewAdapter messageRecViewAdapter;
     ArrayList<Message> messageList;
 
+    //The other User and the Chat object associated with that User(Both are necessary for the API's)
     private User person;
     private Chat chat;
 
+    //The int which tells the API's which part of the messages to display(0-25, 26-50)
     private int messagePart;
 
+    //Class which can be used to get the current date and time. Useful for time-stamping for sent messages
     private Calendar calendar;
 
+    //The Socket object used for real-time message sending and receiving
     private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //Default
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        //Slidr class; used for swiping between Activities.
         Slidr.attach(this);
 
+        //Initializing the Socket and connecting it
         ChatSocket chatSocket = new ChatSocket();
         mSocket = chatSocket.getSocket();
-
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.on(Socket.EVENT_CONNECT, onConnect);
-        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.connect();
 
+        //TODO- Check if this is needed
         getThisView().setOnTouchListener(new SwipeListener(this));
+
+        //Set up the Activity and configure all the variables
         init();
     }
 
-    private Emitter.Listener onConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.i("Testing Socket", "" + mSocket.connected());
-        }
-    };
 
-    private Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-
-            Log.i("Testing Socket", "Doesn't work");
-        }
-    };
-
-    private Emitter.Listener onDisconnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-
-            Log.i("Testing Socket", "Disconnected");
-        }
-    };
-
-
-    /*private GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener(){
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            final float THRESHOLD = 20;
-            float diffY = e2.getY() - e1.getY();
-
-
-            if (diffY < 0 && diffY >= THRESHOLD) {
-                if (!messagesRecyclerView.canScrollVertically(1)) {
-
-                    Log.i("TestingChat", "It works");
-                    messagesRecyclerView.setPadding(messagesRecyclerView.getPaddingLeft(), messagesRecyclerView.getPaddingTop(),
-                            messagesRecyclerView.getPaddingRight(), messagesRecyclerView.getPaddingBottom() + 1);
-
-                    messagesRecyclerView.setClipToPadding(false);
-                }
-            }
-            return false;
-        }
-    };*/
-
-
-    /*@Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        chatGestureDetector.onTouchEvent(event);
-        return true;
-    }*/
-
+    //Initialize all the variables and call some methods
     public void init(){
 
-            messagePanel = findViewById(R.id.textPanel);
-            imageOfPerson = findViewById(R.id.person_image);
-            nameOfPerson = findViewById(R.id.nameOfPerson);
+        messagePanel = findViewById(R.id.textPanel);
+        imageOfPerson = findViewById(R.id.person_image);
+        nameOfPerson = findViewById(R.id.nameOfPerson);
 
-            messagesRecyclerView = findViewById(R.id.user_messages);
+        sentimentView = findViewById(R.id.sentiment_view);
+        sentimentView.setVisibility(View.GONE);
 
-            messageRecViewAdapter = new UserMessagesRecyclerViewAdapter(this);
-            messageList = new ArrayList<>();
+        messagesRecyclerView = findViewById(R.id.user_messages);
 
-            messagePart = 1;
+        messageRecViewAdapter = new UserMessagesRecyclerViewAdapter(this);
+        messageList = new ArrayList<>();
 
-            calendar = Calendar.getInstance();
+        messagePart = 1;
 
-            //chatGestureDetector = new GestureDetector(ChatActivity.this, gestureListener);
+        calendar = Calendar.getInstance();
 
-            setMessagesRecyclerView();
-            getIntentInfo();
+        //chatGestureDetector = new GestureDetector(ChatActivity.this, gestureListener);
+
+        setMessagesRecyclerView();
+        getIntentInfo();
     }
 
+
+    //Set up the RecyclerViewAdapter and related fields
     public void setMessagesRecyclerView(){
 
         messageRecViewAdapter.setMessagesList(messageList);
-
         messagesRecyclerView.setAdapter(messageRecViewAdapter);
-        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messagesRecyclerView.scrollBy(0,5);
-        //messagesRecyclerView.setOnTouchListener(new SwipeListener(this));
 
+        LinearLayoutManager recyclerViewLinearLayoutManager = new LinearLayoutManager(this);
+
+        //Shows items from bottom to top. Useful for displaying messages.
+        recyclerViewLinearLayoutManager.setStackFromEnd(true);
+
+        messagesRecyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
+
+        //Makes RecyclerView scroll to bottom when EditText is clicked
         messagesRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
 
                 if(messageList.size() > 0)
-                    messagesRecyclerView.scrollToPosition(messageList.size() - 1);
+                    messagesRecyclerView.smoothScrollToPosition(messageList.size() - 1);
 
             }
         });
     }
 
+
+    //Method to get the User from the MainActivity intent
     public void getIntentInfo() {
 
         Intent getDetails = getIntent();
         if (getDetails != null) {
 
-
+            //User object from Intent
             person = (User) (getDetails.getSerializableExtra("userObject"));
             checkIfPersonIsChat("");
 
+            //If object is null, set image resource to default, else set name to the name of the User.
             if (person == null)
                 imageOfPerson.setImageResource(R.drawable.ic_launcher_background);
 
@@ -207,6 +188,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                 nameOfPerson.setText(person.getName());
 
+                //Again check if the image url is null or empty and set resource to default, else load the image into the view
                 if(person.getProfilePictureURL() == null || person.getProfilePictureURL().length() < 1)
                     imageOfPerson.setImageResource(R.drawable.ic_launcher_background);
 
@@ -221,46 +203,93 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    //OnClickListeners
+    @Override
+    public void onClick(View v) {
+
+        //Send button. If the EditText is not empty and if chat is not null, call method to send message, else create a chat first.
+        if(v.getId() == R.id.sendButton) {
+
+            String text = messagePanel.getText().toString();
+
+            if(!text.equals("")) {
+
+                if(chat != null)
+                    sendMessage(text);
+                else
+                    checkIfPersonIsChat(text);
+            }
+        }
+    }
+
+
+    //Supposed to be the join room API for the Socket TODO- Configure the Socket
+    private Emitter.Listener joinRoom = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ChatActivity.this, "Room joined", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
+
+
+    //Read in all the Chats in the User's Contacts list and find out which chat belongs to the User object obtained from the intent.
     public void checkIfPersonIsChat(String text){
 
         if(person != null){
 
+            //API call
             Call<ChatListResponse> getAllContacts = ChatRetrofitClient
                     .getInstance()
                     .getChatAPI()
                     .loadChats(SharedPrefManager.getInstance(ChatActivity.this).getUser().getToken());
 
+            //Carry out the API call.
             getAllContacts.enqueue(new Callback<ChatListResponse>() {
                 @Override
                 public void onResponse(Call<ChatListResponse> call, Response<ChatListResponse> response) {
 
                     if(response.isSuccessful()){
 
+                        //List of Chats
                         ChatListResponse clr = response.body();
 
                         if(clr.getChats() == null || clr.getChats().length < 1)
                             createChat(text);
 
+                        //Look for the Chat which contains the User ID of person
                         else{
                             for(Chat c: clr.getChats()){
                                 if(c.getUserID().equals(person.getId())){
 
                                     chat = c;
+                                    Emitter e = mSocket.emit("open-chat", chat.isGroupChat(), chat.getId());
+                                    Log.i("Testing Socket", e.toString());
 
+                                    //If method is called in the beginning of the Activity, load the messages
                                     if(text.equals(""))
                                         loadMessageList(chat);
 
+                                    //Send the text passed from the EditText.
                                     if(!text.equals(""))
                                         sendMessage(text);
                                 }
                             }
 
+                            //Create a new Chat if no Chat correlates to person
                             if(chat == null){
                                 createChat(text);
                             }
                         }
                     }
 
+                    //If API call doesn't give desired results, create a message to the User
                     else{
                         try {
                             String errorBody = response.errorBody().string();
@@ -286,6 +315,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //Create a new Chat and either load the messages or send the message
     public void createChat(String text){
 
         Call<ChatResponse> createNewChatCall = ChatRetrofitClient
@@ -317,27 +347,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    @Override
-    public void onClick(View v) {
-
-        if(v.getId() == messagePanel.getId()){
-        }
-
-        if(v.getId() == R.id.sendButton) {
-
-            String text = messagePanel.getText().toString();
-
-            if(!text.equals("")) {
-
-                if(chat != null)
-                    sendMessage(text);
-
-                else
-                    checkIfPersonIsChat(text);
-            }
-        }
-    }
-
+    //Send the message and time-stamp it
     public void sendMessage(String text){
 
         Call<MessageResponse> sendMessageCall = MessagingRetrofitClient
@@ -345,37 +355,47 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 .getMessagingAPI()
                 .sendMessage(text, SharedPrefManager.getInstance(ChatActivity.this).getUser().getToken(), chat.getId(), chat.isGroupChat());
 
-
         sendMessageCall.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
 
                 if(response.isSuccessful()){
 
+                    //Message obtainted from the API call
                     MessageResponse mr = response.body();
-
                     Message m = mr.getMsg();
 
+                    //Get the current hour and find out AM/PM from that
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     String am_pm = hour/12 == 0 ? "AM" : "PM";
 
+                    //Convert the hour from 24-base to 12-base
                     hour = hour % 12;
                     int minute = calendar.get(Calendar.MINUTE);
 
-                    Date date = calendar.getTime();
-                    String time = String.format("%d", hour) + String.format(":%02d ", minute) + am_pm;
+                    //Combine the hour, minute, and am/pm to get a time String which will be used to display the time the message was sent.
+                    String time = String.format("%d:%02d%s", hour, minute, am_pm);
 
+                    //Find out an accurate date and time which can be used for comparisons
+                    Date date = calendar.getTime();
+
+                    //Format the date to a String which can be displayed to the user
                     SimpleDateFormat dateToString = new SimpleDateFormat("MMM, dd yyyy");
                     String dateString = dateToString.format(date);
 
+                    //TODO- Check if converting the date to a simpler format is necessary
                     SimpleDateFormat stringToDate = new SimpleDateFormat("MMM, dd yyyy");
 
                     try {
+
+                        //TODO- Check if necessary
                         date = stringToDate.parse(dateString);
 
+                        //Year will only be displayed in the date when the year is less than the current one. So it is split
                         String year = dateString.substring(dateString.length() - 4);
                         dateString = dateString.substring(0, dateString.length() - 5);
 
+                        //Set date, dateString, year, and time to the message object
                         m.setDate(date);
                         m.setDateString(dateString);
                         m.setYear(year);
@@ -385,6 +405,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         e.printStackTrace();
                     }
 
+                    //Empty the EditText and add the message to the Adapter's list
                     messagePanel.setText("");
                     messageRecViewAdapter.addToMessagesList(m);
                 }
@@ -409,14 +430,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                Toast.makeText(ChatActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+
+    //Load all the messages from the API and time-stamp each of them
     public void loadMessageList(Chat ch){
 
-        Log.i("Testing", "This user: " + person.getId());
         Call<MessageListResponse> loadMessagesCall = ChatRetrofitClient
                 .getInstance()
                 .getChatAPI()
@@ -428,21 +450,26 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(response.isSuccessful()){
 
+                    //List of messages
                     MessageListResponse ml = response.body();
                     ArrayList<Message> messagesTempList = ml.getMessagesArrayList();
 
+                    //For each message, time-stamp it and add it to the list
                     for(int i = 0; i < messagesTempList.size(); i++){
 
+                        //The date from the Message object consists of Date and Time, split using letters
                         String[] createdAt = messagesTempList.get(i).getCreatedAt().split("[A-Z]");
 
                         SimpleDateFormat toDate = new SimpleDateFormat("yyyy-MM-dd");
 
                         try {
 
+                            //Format the date and convert it into a user-friendly format
                             Date date = toDate.parse(createdAt[0]);
                             SimpleDateFormat toString = new SimpleDateFormat("MMM, dd yyyy");
                             String dateString = toString.format(date);
 
+                            //Split dateString into year and dateString for better display
                             String year = dateString.substring(dateString.length() - 4);
                             dateString = dateString.substring(0, dateString.length() - 5);
 
@@ -464,8 +491,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-
                     }
+
+                    determineSentiment(messagesTempList);
 
                     messageList = messagesTempList;
                     messageRecViewAdapter.setMessagesList(messageList);
@@ -492,6 +520,90 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<MessageListResponse> call, Throwable t) {
                 Log.i("Failure", t.toString());
+            }
+        });
+    }
+
+    private void determineSentiment(ArrayList<Message> messagesList){
+
+        String texts = "";
+
+        for(int i = 0; i < Math.min(25, messagesList.size()); i++)
+            texts += messagesList.get(messagesList.size() - 1 - i).getText() + "||";
+
+        texts = texts.substring(0, texts.length() - 2);
+        Log.i("Testing ML", texts);
+
+        /*OkHttpClient sentimentClient = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder().add("texts", texts).build();
+
+        Request request = new Request.Builder().url("http://192.168.1.65:8000/predict").post(requestBody).build();
+        sentimentClient.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
+                Log.i("Testing ML Failure", e.toString());
+            }
+
+            @Override
+            public void onResponse(@NotNull okhttp3.Call call, @NotNull okhttp3.Response response) throws IOException {
+
+                if (response.isSuccessful()) {
+
+                    Log.i("Testing ML", response.toString());
+                }
+
+
+            }
+        });*/
+
+        Map<String, String> map = new ArrayMap<>();
+        map.put("texts", texts);
+
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), (new JSONObject(map)).toString());
+
+        Call<SentimentResponse> sentimentResponseCall = MachineLearningRetrofitClient
+                .getInstance()
+                .getAPI()
+                .predict(body);
+
+        sentimentResponseCall.enqueue(new Callback<SentimentResponse>() {
+            @Override
+            public void onResponse(Call<SentimentResponse> call, Response<SentimentResponse> response) {
+
+                if(response.isSuccessful()){
+
+                    SentimentResponse sr = response.body();
+
+                    if(sr.getMessage().equals("negative"))
+                        sentimentView.setBackgroundResource(R.drawable.person_emotion_negative);
+
+                    else if(sr.getMessage().equals("positive"))
+                        sentimentView.setBackgroundResource(R.drawable.person_emotion_positive);
+
+                    sentimentView.setVisibility(View.VISIBLE);
+                }
+
+                else{
+                    try {
+                        String errorBody = response.errorBody().string();
+                        int index = errorBody.indexOf("\"message\":");
+
+                        if(index != -1){
+
+                            String errorSub = errorBody.substring(index + 10);
+                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                        }
+
+                        Toast.makeText(ChatActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SentimentResponse> call, Throwable throwable) {
+                Log.i("Testing ML Failure", throwable.toString());
             }
         });
     }

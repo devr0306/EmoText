@@ -21,10 +21,8 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        if(SharedPrefManager.getInstance(StartActivity.this).isLoggedIn()){
-
+        if(SharedPrefManager.getInstance(StartActivity.this).isLoggedIn())
             startActivity(new Intent(StartActivity.this, MainActivity.class));
-        }
 
         initValues();
     }

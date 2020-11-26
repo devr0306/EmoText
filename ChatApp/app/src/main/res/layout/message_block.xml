@@ -94,7 +94,7 @@
                     android:fontFamily="@font/inter_regular"
                     android:lineSpacingMultiplier="0.9"
                     android:text="Hi this is dev, and I am here to test this gradient color"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="17dp" />
 
             </RelativeLayout>

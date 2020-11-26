@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthRetrofitClient {
 
-    private static final String BASE_URL = "http://10.0.0.185:5000/api/auth/";
+    private static final String BASE_URL = "http://192.168.1.65:5000/api/auth/";
     private static AuthRetrofitClient authRetrofitClient;
     private Retrofit retrofit;
 

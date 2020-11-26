@@ -1,24 +1,22 @@
 package com.example.chatapp.RetrofitClients;
 
-import com.example.chatapp.APIs.AuthAPI;
-import com.example.chatapp.APIs.ChatAPI;
+import com.example.chatapp.APIs.MachineLearningAPI;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ChatRetrofitClient {
+public class MachineLearningRetrofitClient {
 
-    private static final String BASE_URL = "http://192.168.1.65:5000/api/chat/";
-    private static ChatRetrofitClient chatRetrofitClient;
+    private static final String BASE_URL = "http://192.168.1.65:8000/";
+    private static MachineLearningRetrofitClient machineLearningRetrofitClient;
     private Retrofit retrofit;
 
     private HttpLoggingInterceptor httpLoggingInterceptor;
     private OkHttpClient okHttpClient;
 
-    private ChatRetrofitClient(){
-
+    private MachineLearningRetrofitClient(){
         httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -27,23 +25,23 @@ public class ChatRetrofitClient {
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
 
-        retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit
+                .Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
     }
 
-    public static synchronized ChatRetrofitClient getInstance(){
+    public static synchronized MachineLearningRetrofitClient getInstance(){
 
-        if(chatRetrofitClient == null){
-            chatRetrofitClient = new ChatRetrofitClient();
-        }
+        if(machineLearningRetrofitClient == null)
+            machineLearningRetrofitClient = new MachineLearningRetrofitClient();
 
-        return chatRetrofitClient;
+        return machineLearningRetrofitClient;
     }
 
-    public ChatAPI getChatAPI(){
-        return retrofit.create(ChatAPI.class);
+    public MachineLearningAPI getAPI(){
+        return retrofit.create(MachineLearningAPI.class);
     }
 }
