@@ -30,36 +30,56 @@ This app consists of the following major activities:
 ### Start
 This is the first activity which a first-time user(or a returning one) will see.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Start.jpg" height="400" width="225">
+
 The user can either click on the sign up button or the sign in one.
 
 ### Sign Up/Sign In
 The sign up and the sign in activities are 2 different ones, which open based on the button selected in the start activity.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Sign-In.jpg" height="400" width="225">
+
 The sign in activity consists of 2 simple fields(username/email and password). After entering those fields, the user can advance to the main activity.
+
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Sign-Up-1.jpg" height="400" width="225">     <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Sign-Up-2.jpg" height="400" width="225">      <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Sign-Up-3.jpg" height="400" width="225">
 
 The sign up activity consists of more fields. It starts off with the email, followed by an email code the user will receive. After that, the final 4 fields will be username, email, password, and confirm password, along with a place to pick a profile picture. After entering everything, the user can advance to the main activity.
 
 ### Main
 This will be a swipable main activity consisting of 3 tabs: People, Camera, and Chats. This activity will have a bar at the top consisting of 3 items: the profile picture of the user, which can direct him/her to the User Info Activity, a search bar, and a button which will direct the user to the Add Friends Activity.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/People.jpg" height="400" width="225">
+
 The People tab will consist of a list of added friends a user has. Upon clicking on any item in the list, the user will be taken to the Chat Activity.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Camera.jpg" height="400" width="225">
+
 The Camera tab will consist of exactly what it says, a camera along with a couple of buttons to make it functional.
+
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Chats.jpg" height="400" width="225">
 
 The Chats tab will contain a list of all the people the user has started a chat with. Upon clicking on any item in the list, the user will be taken to the Chat Activity.
 
 ### Chat
 This will be the activity where message sending and receiving will take place. It contains many things and everything functions just like you would expect it to.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Chat.jpg" height="400" width="225">
+
 It also has the feature to swipe in and out of the Activity.
 
 ### Add Friends/Requests
 The Add Friends Activity will be where the user can search for and add people. Within the Activity will be a button/bar to go to the Requests Activity, which will contain the requests other people have sent to the user.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Add-People.jpg" height="400" width="225">      <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Requests.jpg" height="400" width="225">
+
 ### User Info
 This will contain basic info on the user such as his/her profile picture, some stats, and buttons that will redirect the user to adding people or starting chats.
 
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/User-Info.jpg" height="400" width="225">
+
 ### Settings
 This will be the Activity which will handle the settings of the app.
+
+<img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Settings-1.jpg" height="400" width="225">      <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Settings-2.jpg" height="400" width="225">
 
 As of right now, the Settings Activity can only be used to sign out of the app, but it will include more things later on.
