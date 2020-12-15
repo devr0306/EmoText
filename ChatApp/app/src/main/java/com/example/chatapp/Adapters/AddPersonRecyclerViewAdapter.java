@@ -88,8 +88,6 @@ public class AddPersonRecyclerViewAdapter extends RecyclerView.Adapter<AddPerson
                     Toast.makeText(addUserContext, dr.getMessage(), Toast.LENGTH_SHORT).show();
                     addedUsers.add(contactsList.get(position).getUsername());
 
-                    Toast.makeText(addUserContext, addedUsers.toString(), Toast.LENGTH_SHORT).show();
-
                     holder.isAdded = true;
                     holder.addButton.setText("Added");
                 }

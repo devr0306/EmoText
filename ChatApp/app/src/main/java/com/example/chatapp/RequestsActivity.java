@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chatapp.APIs.ContactsAPI;
@@ -21,8 +22,11 @@ import com.example.chatapp.RetrofitClients.ContactsAPIClient;
 import com.r0adkll.slidr.Slidr;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +36,8 @@ public class RequestsActivity extends AppCompatActivity {
 
     private RecyclerView requestsRecyclerView;
     private ArrayList<FriendRequest> friendRequests;
+
+    private TextView noRequests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,10 @@ public class RequestsActivity extends AppCompatActivity {
     public void init(){
 
         requestsRecyclerView = findViewById(R.id.requests_recycler_view);
+        noRequests = findViewById(R.id.no_requests_text_view);
+
+        noRequests.setVisibility(View.GONE);
+
         initializeLists();
 
         findViewById(R.id.back_arrow_requests_activity).setOnClickListener(new View.OnClickListener() {
@@ -72,18 +82,31 @@ public class RequestsActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
 
                     FriendRequestsResponse frr = response.body();
-                    Toast.makeText(RequestsActivity.this, Arrays.toString(frr.getRequests()), Toast.LENGTH_SHORT).show();
-
 
                     if(frr.getRequests() != null && frr.getRequests().length != 0){
 
+                        noRequests.setVisibility(View.GONE);
                         friendRequests = frr.returnFriendsList();
+
                         RequestsRecyclerViewAdapter requestsRecyclerViewAdapter = new RequestsRecyclerViewAdapter(RequestsActivity.this);
                         requestsRecyclerViewAdapter.setLists(friendRequests);
+
+                        //TODO- Check why multiple friend requests send in the AddPersonRecyclerView class and remove this part
+                        Set<String> set = new HashSet<>();
+
+                        for(int i = friendRequests.size() - 1; i >= 0; i--){
+
+                            if(!set.add(friendRequests.get(i).getUserFrom()))
+                                friendRequests.remove(i);
+                        }
 
                         requestsRecyclerView.setAdapter(requestsRecyclerViewAdapter);
                         requestsRecyclerView.setLayoutManager(new LinearLayoutManager(RequestsActivity.this));
                     }
+
+                    else
+                        noRequests.setVisibility(View.VISIBLE);
+
                 }
 
                 else{

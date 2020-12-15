@@ -26,6 +26,8 @@ import com.example.chatapp.SharedPrefManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -62,7 +64,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         holder.acceptRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                acceptRequest(holder, position);
+                acceptRequest(position);
                 friendRequests.remove(position);
                 notifyDataSetChanged();
             }
@@ -71,7 +73,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         holder.denyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                denyRequest(holder, position);
+                denyRequest(position);
                 friendRequests.remove(position);
                 notifyDataSetChanged();
             }
@@ -80,7 +82,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         holder.exitActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelRequest(holder, position);
+                cancelRequest(position);
                 friendRequests.remove(position);
                 notifyDataSetChanged();
             }
@@ -143,7 +145,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         });
     }
 
-    public void acceptRequest(RequestsViewHolder holder, int position){
+    public void acceptRequest(int position){
 
         Call<DefaultResponse> acceptRequestCall = ContactsAPIClient
                 .getInstance()
@@ -185,7 +187,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         });
     }
 
-    public void denyRequest(RequestsViewHolder holder, int position){
+    public void denyRequest(int position){
 
         Call<DefaultResponse> declineRequestCall = ContactsAPIClient
                 .getInstance()
@@ -227,7 +229,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         });
     }
 
-    public void cancelRequest(RequestsViewHolder holder, int position){
+    public void cancelRequest(int position){
 
         Call<DefaultResponse> ignoreRequestCall = ContactsAPIClient
                 .getInstance()
@@ -277,7 +279,6 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     public void setLists(ArrayList<FriendRequest> friendRequests){
         this.friendRequests = friendRequests;
         notifyDataSetChanged();
-
     }
 
     public class RequestsViewHolder extends RecyclerView.ViewHolder{

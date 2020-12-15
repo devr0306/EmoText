@@ -135,6 +135,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         messagePart = 1;
 
+        findViewById(R.id.back_arrow_chat_activity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateOut();
+            }
+        });
+
         calendar = Calendar.getInstance();
 
         //chatGestureDetector = new GestureDetector(ChatActivity.this, gestureListener);
@@ -531,81 +538,61 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         for(int i = 0; i < Math.min(25, messagesList.size()); i++)
             texts += messagesList.get(messagesList.size() - 1 - i).getText() + "||";
 
-        texts = texts.substring(0, texts.length() - 2);
-        Log.i("Testing ML", texts);
+        if (texts.length() > 2) {
 
-        /*OkHttpClient sentimentClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder().add("texts", texts).build();
+            texts = texts.substring(0, texts.length() - 2);
+            Log.i("Testing ML", texts);
 
-        Request request = new Request.Builder().url("http://192.168.1.65:8000/predict").post(requestBody).build();
-        sentimentClient.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
-                Log.i("Testing ML Failure", e.toString());
-            }
+            Map<String, String> map = new ArrayMap<>();
+            map.put("texts", texts);
 
-            @Override
-            public void onResponse(@NotNull okhttp3.Call call, @NotNull okhttp3.Response response) throws IOException {
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), (new JSONObject(map)).toString());
 
-                if (response.isSuccessful()) {
+            Call<SentimentResponse> sentimentResponseCall = MachineLearningRetrofitClient
+                    .getInstance()
+                    .getAPI()
+                    .predict(body);
 
-                    Log.i("Testing ML", response.toString());
-                }
+            sentimentResponseCall.enqueue(new Callback<SentimentResponse>() {
+                @Override
+                public void onResponse(Call<SentimentResponse> call, Response<SentimentResponse> response) {
 
+                    if (response.isSuccessful()) {
 
-            }
-        });*/
+                        SentimentResponse sr = response.body();
 
-        Map<String, String> map = new ArrayMap<>();
-        map.put("texts", texts);
+                        //TODO- Change this
+                        if (sr.getMessage().equals("negative"))
+                            sentimentView.setBackgroundResource(R.drawable.person_emotion_positive);
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), (new JSONObject(map)).toString());
+                        else if (sr.getMessage().equals("positive"))
+                            sentimentView.setBackgroundResource(R.drawable.person_emotion_negative);
 
-        Call<SentimentResponse> sentimentResponseCall = MachineLearningRetrofitClient
-                .getInstance()
-                .getAPI()
-                .predict(body);
+                        sentimentView.setVisibility(View.VISIBLE);
+                    } else {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            int index = errorBody.indexOf("\"message\":");
 
-        sentimentResponseCall.enqueue(new Callback<SentimentResponse>() {
-            @Override
-            public void onResponse(Call<SentimentResponse> call, Response<SentimentResponse> response) {
+                            if (index != -1) {
 
-                if(response.isSuccessful()){
+                                String errorSub = errorBody.substring(index + 10);
+                                errorBody = errorSub.substring(1, errorSub.length() - 2);
+                            }
 
-                    SentimentResponse sr = response.body();
-
-                    if(sr.getMessage().equals("negative"))
-                        sentimentView.setBackgroundResource(R.drawable.person_emotion_negative);
-
-                    else if(sr.getMessage().equals("positive"))
-                        sentimentView.setBackgroundResource(R.drawable.person_emotion_positive);
-
-                    sentimentView.setVisibility(View.VISIBLE);
-                }
-
-                else{
-                    try {
-                        String errorBody = response.errorBody().string();
-                        int index = errorBody.indexOf("\"message\":");
-
-                        if(index != -1){
-
-                            String errorSub = errorBody.substring(index + 10);
-                            errorBody = errorSub.substring(1, errorSub.length() - 2);
+                            Toast.makeText(ChatActivity.this, errorBody, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-
-                        Toast.makeText(ChatActivity.this, errorBody, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SentimentResponse> call, Throwable throwable) {
-                Log.i("Testing ML Failure", throwable.toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<SentimentResponse> call, Throwable throwable) {
+                    Log.i("Testing ML Failure", throwable.toString());
+                }
+            });
+        }
     }
 
     public View getThisView(){

@@ -96,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    //TODO- Doesn't work
     public void signIn(){
 
         Call<LoginResponse> loginCall = AuthRetrofitClient

@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MachineLearningRetrofitClient {
 
-    private static final String BASE_URL = "http://192.168.1.65:8000/";
+    private static final String BASE_URL = "http://134.209.28.184:8000/";
     private static MachineLearningRetrofitClient machineLearningRetrofitClient;
     private Retrofit retrofit;
 

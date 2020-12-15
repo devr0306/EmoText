@@ -65,7 +65,7 @@
                 android:textSize="20dp"/>
         </RelativeLayout>
 
-
+        <!--
         <RelativeLayout
             android:id="@+id/layout_for_email_code"
             android:layout_width="0dp"
@@ -134,7 +134,7 @@
 
 
         </RelativeLayout>
-
+        -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -13,26 +13,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="150dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="150dp"
-        android:src="@drawable/ic_launcher_background"
+        app:srcCompat="@drawable/emotext_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.54"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/welcomeText"
+        android:id="@+id/emotext_text_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Welcome"
-        android:textColor="@color/torquoise"
-        android:textSize="30dp"
+        android:fontFamily="@font/exo_black"
+        android:text="Emo"
+        android:textColor="#90EF22"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/bottom_divider_for_layouts"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/emotext_text_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/exo_black"
+        android:text="Text"
+        android:textColor="#CA1327"
+        android:textSize="35dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/bottom_divider_for_layouts"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <!-- Sign Up Components -->

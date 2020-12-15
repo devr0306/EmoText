@@ -133,7 +133,8 @@ public class ChatTabFragment extends Fragment {
     //Convert the chats Array to a User ArrayList
     public void convertToUsers(Chat[] chats) throws ParseException {
 
-        MergeSort.mergeSort(chats);
+        //TODO- Implement Merge sort. Before doing that, make sure no Chats have 0 messages. Delete the chat if the messages count is 0.
+        //MergeSort.mergeSort(chats);
 
         for(Chat chat: chats){
 

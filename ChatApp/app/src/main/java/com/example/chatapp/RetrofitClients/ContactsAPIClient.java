@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ContactsAPIClient {
 
-    private static final String BASE_URL = "http://192.168.1.65:5000/api/contacts/";
+    private static final String BASE_URL = "http://134.209.28.184:5000/api/contacts/";
     private static ContactsAPIClient contactsAPIClient;
     private Retrofit retrofit;
 

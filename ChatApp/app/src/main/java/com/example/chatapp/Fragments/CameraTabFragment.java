@@ -70,7 +70,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
 
     private PreviewView cameraView;
     private ImageView cameraFlipButton, flashButton, imageCaptureButton;
-    private VerticalSeekBar zoomSeekBar;
+    //private VerticalSeekBar zoomSeekBar;
 
     private ImageView capturedImage, sendButton;
 
@@ -108,7 +108,8 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
         cameraFlipButton = cameraTabView.findViewById(R.id.flip_camera_button);
         imageCaptureButton = cameraTabView.findViewById(R.id.image_capture_button);
 
-        zoomSeekBar = cameraTabView.findViewById(R.id.zoom_bar);
+        //TODO- Check if seekbar is needed
+        //zoomSeekBar = cameraTabView.findViewById(R.id.zoom_bar);
 
         capturedImage = cameraTabView.findViewById(R.id.captured_image);
         sendButton = cameraTabView.findViewById(R.id.save_button);
@@ -273,7 +274,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
         scaleGestureDetector = new ScaleGestureDetector(getContext(),scaleGestureDetectorListener);
         gestureDetector = new GestureDetector(getContext(), gestureListener);
 
-        zoomSeekBar.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+        /*zoomSeekBar.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
 
@@ -281,7 +282,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
                 camera.getCameraControl().setLinearZoom((float)integer/(float)100);
                 return null;
             }
-        });
+        });*/
 
         cameraView.setOnTouchListener(this);
     }
@@ -329,7 +330,7 @@ public class CameraTabFragment extends Fragment implements View.OnTouchListener 
             int zoomProgress = Math.min((int)(finalZoom * 12.5), 100);
             Log.i("TestingCamera", "zoomProgress: " + zoomProgress);
 
-            zoomSeekBar.setProgress(zoomProgress);
+            //zoomSeekBar.setProgress(zoomProgress);
 
             camera.getCameraControl().setZoomRatio(finalZoom);
 

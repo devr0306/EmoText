@@ -59,6 +59,23 @@ public class UserInfoActivity extends AppCompatActivity implements SwipeListener
                 startActivity(new Intent(UserInfoActivity.this, SettingsActivity.class));
             }
         });
+
+        findViewById(R.id.add_people_button_user_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserInfoActivity.this, AddPersonActivity.class));
+            }
+        });
+
+        findViewById(R.id.all_friends_button_user_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent toMain = new Intent(UserInfoActivity.this, MainActivity.class);
+                toMain.putExtra("position", 0);
+                startActivity(toMain);
+            }
+        });
     }
 
     public void getIntentInfo(){

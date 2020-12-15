@@ -59,9 +59,9 @@ public class SignUpActivity extends AppCompatActivity {
     
     //Email stuff
     private ConstraintLayout emailLayout;
-    private RelativeLayout emailPromptLayout, emailCodePromptLayout;
-    private Button emailEnterButton, emailCodeEnterButton;
-    private EditText emailEnterEditText, emailCodeEnterEditText;
+    private RelativeLayout emailPromptLayout;
+    private Button emailEnterButton;
+    private EditText emailEnterEditText;
     
     private String email, username, name, password;
 
@@ -88,50 +88,51 @@ public class SignUpActivity extends AppCompatActivity {
 
         emailLayout = findViewById(R.id.email_and_code_signup_layout);
         emailPromptLayout = findViewById(R.id.layout_for_email_enter);
-        emailCodePromptLayout = findViewById(R.id.layout_for_email_code);
+        //emailCodePromptLayout = findViewById(R.id.layout_for_email_code);
         emailEnterButton = findViewById(R.id.email_enter_button);
-        emailCodeEnterButton = findViewById(R.id.email_code_enter_button);
+        //emailCodeEnterButton = findViewById(R.id.email_code_enter_button);
         emailEnterEditText = findViewById(R.id.email_prompt_edit_text);
-        emailCodeEnterEditText = findViewById(R.id.email_code_edit_text);
+        //emailCodeEnterEditText = findViewById(R.id.email_code_edit_text);
 
         startEmailLayout();
 
-        findViewById(R.id.go_back_to_email).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.go_back_to_email).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startEmailLayout();
             }
-        });
+        });*/
     }
 
     public void startEmailLayout(){
 
         emailLayout.setVisibility(View.VISIBLE);
         emailPromptLayout.setVisibility(View.VISIBLE);
-        emailCodePromptLayout.setVisibility(View.GONE);
+        //emailCodePromptLayout.setVisibility(View.GONE);
         layout_for_username_fragment.setVisibility(View.GONE);
 
         emailEnterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO uncomment the lines
-                //if(!emailEnterEditText.getText().toString().equals("")){
+
+                email = emailEnterEditText.getText().toString().trim();
 
                 if(emailEnterEditText.getText().toString().isEmpty()){
                     emailEnterEditText.setError("Fill in the email");
                 }
 
-                else{
-                    email = emailEnterEditText.getText().toString().trim();
-                    emailPromptLayout.setVisibility(View.GONE);
-                    emailCodePromptLayout.setVisibility(View.VISIBLE);
-                }
+                else if(!email.contains("@") || !email.contains(".com"))
+                    emailEnterEditText.setError("Please enter a valid email.");
 
-                //}
+                else{
+                    emailPromptLayout.setVisibility(View.GONE);
+                    layout_for_username_fragment.setVisibility(View.VISIBLE);
+                    //emailCodePromptLayout.setVisibility(View.VISIBLE);
+                }
             }
         });
 
-        emailCodeEnterButton.setOnClickListener(new View.OnClickListener() {
+        /*emailCodeEnterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -143,7 +144,7 @@ public class SignUpActivity extends AppCompatActivity {
                     layout_for_username_fragment.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
     }
     
     public void initUserName(){
@@ -258,13 +259,24 @@ public class SignUpActivity extends AppCompatActivity {
                 else
                     name = nameET.getText().toString().trim();
 
-                if (passwordET.getText().toString().isEmpty())
+                String passwordText = passwordET.getText().toString().trim();
+                String confirmText = confirmPasswordET.getText().toString().trim();
+
+                if (passwordText.isEmpty())
                     passwordET.setError("Fill in the password");
 
-                else
-                    password = passwordET.getText().toString().trim();
+                else if(confirmText.isEmpty())
+                    confirmPasswordET.setError("Confirm the password");
 
-                signUp();
+                else if(!confirmText.isEmpty() &&  !confirmText.equals(passwordText))
+                    Toast.makeText(SignUpActivity.this, "The passwords do not match", Toast.LENGTH_SHORT).show();
+
+                else{
+
+                    password = passwordET.getText().toString().trim();
+                    signUp();
+                }
+
             }
         });
     }

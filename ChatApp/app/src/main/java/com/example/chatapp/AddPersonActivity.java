@@ -121,12 +121,13 @@ public class AddPersonActivity extends AppCompatActivity implements SwipeListene
 
                         userList = ulr.convertToList();
 
-                        Toast.makeText(AddPersonActivity.this, userList.toString(), Toast.LENGTH_SHORT).show();
+                        for(int i = userList.size() - 1; i >= 0; i--){
+
+                            if(userList.get(i).getId().equals(SharedPrefManager.getInstance(AddPersonActivity.this).getUser().getId()))
+                                userList.remove(i);
+                        }
                         addPersonRecyclerViewAdapter.setcontactsList(userList);
                     }
-
-                    else
-                        Toast.makeText(AddPersonActivity.this, Arrays.toString(ulr.getContacts()), Toast.LENGTH_SHORT).show();
 
                 }
                 else{

@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChatRetrofitClient {
 
-    private static final String BASE_URL = "http://192.168.1.65:5000/api/chat/";
+    private static final String BASE_URL = "http://134.209.28.184:5000/api/chat/";
     private static ChatRetrofitClient chatRetrofitClient;
     private Retrofit retrofit;
 
