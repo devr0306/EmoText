@@ -1,8 +1,12 @@
 # EmoText
 ## Table of Contents
+* [Link](#Link)
 * [Overview](#Overview)
 * [Technologies](#Technologies)
 * [App Details](#App-Details)
+
+## Link
+* [Android App](https://play.google.com/store/apps/details?id=com.emotext.chatapp)
 
 ## Overview
 This app is a Machine Learning based messaging app which uses Natural Language processing to detect the emotions of a user through the last few texts he/she sent to others. Using that information, friends of the user can have an idea of how to approach the person.
