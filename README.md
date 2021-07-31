@@ -4,6 +4,7 @@
 * [Overview](#Overview)
 * [Technologies](#Technologies)
 * [App Details](#App-Details)
+* [Model Details](#Model-Details)
 
 ## Link
 * [Android App](https://play.google.com/store/apps/details?id=com.emotext.chatapp)
@@ -87,3 +88,16 @@ This will be the Activity which will handle the settings of the app.
 <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Settings-1.jpg" height="400" width="225">      <img src="https://github.com/devr0306/EmoText/blob/master/App-Pics/Settings-2.jpg" height="400" width="225">
 
 As of right now, the Settings Activity can only be used to sign out of the app, but it will include more things later on.
+
+## Model Details
+The machine learning model uses nltk, sklearn, and TensorFlow to predict sentiment(positive/negative) from texts. I trained the model in the following steps:
+* It reads an enormous number of tweets from a downloaded file and cleans the data up using nltk. 
+* A TensorFlow model is created and trained using the cleaned data.
+* The model is then tested using a validation data set, which is a part of the train data set that was taken out before training.
+* The model is then saved to a file.
+
+The saved model is then used to predict the emotions of new sets of data(texts from the app) in the following steps:
+* The data is imported from API's in a JSON format and is cleaned up in the same way as the process in training.
+* The model is downloaded and the data is given to the model as input, for which it outputs a number(0 or 1).
+* A zero means "negative sentiment" while a 1 means "positive sentiment".
+* The output is then sent to the app via API's in Flask and the app displays the model's prediction in the Chat Activity.
