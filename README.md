@@ -91,7 +91,7 @@ As of right now, the Settings Activity can only be used to sign out of the app, 
 
 ## Model Details
 The machine learning model uses nltk, sklearn, and TensorFlow to predict sentiment(positive/negative) from texts. I trained the model in the following steps:
-* It reads an enormous number of tweets from a downloaded file and cleans the data up using nltk. 
+* It reads around a million tweets from a downloaded file and cleans the data up using nltk. 
 * A TensorFlow model is created and trained using the cleaned data.
 * The model is then tested using a validation data set, which is a part of the train data set that was taken out before training.
 * The model is then saved to a file.
