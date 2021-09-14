@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_panel"
+        android:elevation="10dp">
+
+        <TextView
+            android:id="@+id/nameOfPerson"
+            android:layout_width="195dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="10dp"
+            android:text="TextView"
+            android:layout_toRightOf="@+id/person_image"
+            android:layout_centerVertical="true"
+            android:textSize="36sp"
+            android:textStyle="bold"
+
+            tools:text="@tools:sample/first_names" />
+
+        <ImageView
+            android:id="@+id/person_image"
+            android:layout_width="63dp"
+            android:layout_height="63dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginVertical="5dp"
+            android:layout_centerVertical="true"
+
+            tools:srcCompat="@tools:sample/avatars" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/user_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_panel"
+        android:layout_above="@+id/container_for_typing_components"
+        android:layout_marginVertical="1dp"
+        android:layout_marginHorizontal="2dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/container_for_typing_components"
+        android:layout_alignParentBottom="true"
+        android:elevation="5dp">
+
+        <ImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/torquoise"
+            android:onClick="onClick"
+            android:src="@drawable/ic_send"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/textPanel"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="5dp"
+            android:ellipsize="none"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:onClick="onClick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sendButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/chat_activity_edit_text_border"
+            android:hint="Text..."
+            android:textColorHint="@color/black"
+            android:textSize="20dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
+
